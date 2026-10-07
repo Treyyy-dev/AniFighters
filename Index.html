@@ -1,0 +1,3308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ki Legends – All-Star Pixel Clash</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+:root{
+  --ink:#070a22;--navy:#10164a;--navy2:#1b2476;--cyan:#35e6ff;--orange:#ff9420;--red:#f0452c;--green:#40d95a;
+  --yellow:#ffd23a;--purple:#a05cf2;--blue:#3b82ff;--paper:#fff4d8;--gold:#ffc83a;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{height:100%;background:#05071a;color-scheme:dark;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;height:100%;background:#05071a;color:#fff;font-family:'Press Start 2P','Courier New',monospace;font-size:10px;line-height:1.5;
+  overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+button{font:inherit;color:#fff;border:0;background:none;padding:0;cursor:pointer}
+button:focus-visible{outline:3px solid var(--cyan);outline-offset:4px}
+canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block}
+#app{position:relative;height:100%;max-width:480px;margin:0 auto;overflow:hidden;background:#0b0f33}
+.screen{position:absolute;inset:0;display:none}
+.screen.on{display:block}
+.pad{padding:58px 12px 78px;overflow-y:auto;overflow-x:hidden;
+  background:repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 8px,transparent 8px 16px),linear-gradient(#10164a,#1a1060 70%,#240f58)}
+h2{margin:6px 0 14px;font-size:15px;font-weight:400;color:var(--yellow);text-shadow:3px 3px 0 #000}
+.px{box-shadow:0 -3px 0 0 var(--bd,#000),0 3px 0 0 var(--bd,#000),-3px 0 0 0 var(--bd,#000),3px 0 0 0 var(--bd,#000)}
+.btn{display:inline-block;background:var(--bg,#2a3aa8);padding:12px 14px;margin:3px;text-shadow:2px 2px 0 #000;
+  box-shadow:0 -3px 0 0 #000,0 3px 0 0 #000,-3px 0 0 0 #000,3px 0 0 0 #000,inset 0 -4px 0 rgba(0,0,0,.35),inset 0 4px 0 rgba(255,255,255,.25)}
+.btn:active{transform:translateY(2px)}
+.btn[disabled]{filter:grayscale(1) brightness(.6);cursor:default}
+.gem{display:inline-block;width:11px;height:11px;background:#8cecff;transform:rotate(45deg);box-shadow:inset -3px -3px 0 #2aa6d6;margin:0 4px 0 2px;vertical-align:-1px}
+
+/* header */
+#hdr{position:absolute;left:10px;right:10px;top:8px;height:36px;display:flex;align-items:center;gap:10px;z-index:20;pointer-events:none}
+#hdr>*{pointer-events:auto}
+.hbox{background:rgba(7,10,34,.88);height:30px;display:flex;align-items:center;padding:0 8px;margin:3px;box-shadow:0 -3px 0 0 #000,0 3px 0 0 #000,-3px 0 0 0 #000,3px 0 0 0 #000}
+#hLv{color:var(--yellow);font-size:12px;text-shadow:2px 2px 0 #000;white-space:nowrap}
+#hXp{flex:1;height:10px;background:#000;border:2px solid #000;margin:0 2px;box-shadow:0 0 0 2px #2a3380}
+#hXp i{display:block;height:100%;background:var(--cyan);width:0}
+#hGem{font-size:12px;white-space:nowrap}
+#hPlus{background:var(--green);color:#000;width:20px;height:20px;margin-left:8px;font-size:12px;line-height:20px;text-align:center;box-shadow:0 -2px 0 #000,0 2px 0 #000,-2px 0 0 #000,2px 0 0 #000}
+
+/* home */
+#homeCv{position:absolute;inset:0;width:100%;height:100%}
+.side{position:absolute;right:10px;top:66px;display:flex;flex-direction:column;gap:12px;align-items:flex-end}
+.side .btn{font-size:8px;padding:8px 8px;--bg:#1b2476}
+#lead{position:absolute;left:14px;top:70px;text-shadow:3px 3px 0 #000}
+#lead b{display:block;font-size:15px;font-weight:400;color:var(--yellow)}
+#lead span{font-size:8px;color:#bfe0ff}
+.modes{position:absolute;left:0;right:0;bottom:92px;display:flex;align-items:flex-end;justify-content:center;gap:0;padding:0 8px}
+.mode{display:block;position:relative;height:74px;transform:skewX(-10deg);margin:0 4px;text-shadow:3px 3px 0 #000;font-size:15px;text-align:center;
+  box-shadow:0 -3px 0 0 #000,0 3px 0 0 #000,-3px 0 0 0 #000,3px 0 0 0 #000,inset 0 -6px 0 rgba(0,0,0,.35),inset 0 5px 0 rgba(255,255,255,.3)}
+.mode>*{display:block;transform:skewX(10deg)}
+.mode small{font-size:7px;color:#fff;margin-top:5px;text-shadow:2px 2px 0 #000}
+.mode:active{transform:skewX(-10deg) translateY(3px)}
+.m-story{flex:1.15;background:linear-gradient(#ffb23a,#f0701c);padding-top:20px}
+.m-pvp{flex:1.15;background:linear-gradient(#4aa0ff,#2a50d8);padding-top:20px}
+.m-hunt{flex:1;height:92px;background:linear-gradient(#58e070,#1fa03a);padding-top:16px;font-size:13px}
+#nav{position:absolute;left:0;right:0;bottom:0;height:70px;display:flex;background:#080b2a;border-top:4px solid #000;z-index:25;box-shadow:0 -4px 0 #2a3380}
+#nav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:7px;color:#9fb0ff;background:linear-gradient(#10164a,#0a0e33)}
+#nav button canvas{width:27px;height:27px}
+#nav button.on{color:#000;background:linear-gradient(#ffe36a,#ffb020)}
+#nav button.home{flex:1.2}
+
+/* lists */
+.slots{display:flex;gap:10px;margin-bottom:14px}
+.slot{flex:1;padding:6px 4px 6px;background:#0a0e33;text-align:center;font-size:7px;--bd:#2a3380;margin:3px}
+.slot.sel{--bd:var(--yellow);background:#2a2260}
+.slot canvas{width:64px;height:68px;margin:0 auto 6px}
+.roster{display:block}
+.rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.rhead{margin:16px 3px 12px;font-size:9px;color:var(--sc);text-shadow:2px 2px 0 #000;border-left:6px solid var(--sc);padding-left:8px;line-height:1.4}
+.rhead span{color:#9fb0ff;font-size:7px;margin-left:6px}
+.rc{padding:3px;background:#0a0e33;font-size:6px;text-align:center;margin:3px;--bd:#2a3380;color:#fff;line-height:1.4}
+.rc.sel{--bd:var(--yellow)}
+.rc canvas{width:100%;height:auto;aspect-ratio:28/30;margin-bottom:4px}
+.rc.lock canvas{opacity:.9}
+.rc.lock{color:#6f78b8}
+.detail{display:flex;gap:12px;background:#0a0e33;padding:10px;margin:3px 3px 16px;--bd:#2a3380;min-height:150px}
+.detail canvas.big{width:96px;height:120px;flex:none;background:linear-gradient(#222a7a,#10164a)}
+.detail .tx{flex:1;font-size:8px;line-height:1.9}
+.detail h3{margin:0 0 4px;font-size:12px;font-weight:400;color:var(--yellow);text-shadow:2px 2px 0 #000}
+.tag{display:inline-block;padding:2px 5px;color:#000;font-size:7px;margin-right:4px}
+.st{display:flex;align-items:center;gap:10px;width:calc(100% - 6px);text-align:left;background:#0a0e33;padding:10px;margin:3px 3px 14px;--bd:#2a3380;
+  box-shadow:0 -3px 0 0 var(--bd),0 3px 0 0 var(--bd),-3px 0 0 0 var(--bd),3px 0 0 0 var(--bd)}
+.st>b{font-size:20px;color:var(--yellow);width:26px;text-shadow:3px 3px 0 #000;font-weight:400}
+.st .nm{flex:1;font-size:9px;line-height:1.8}
+.st .fo{display:flex;gap:4px;margin-top:6px}
+.st .fo canvas{width:28px;height:30px}
+.st.lock{opacity:.5;filter:grayscale(.8)}
+.stars{color:#554;font-size:12px;letter-spacing:2px}
+.stars em{font-style:normal;color:var(--yellow)}
+.ms{background:#0a0e33;padding:10px;margin:3px 3px 14px;--bd:#2a3380;display:flex;align-items:center;gap:8px;box-shadow:0 -3px 0 0 var(--bd),0 3px 0 0 var(--bd),-3px 0 0 0 var(--bd),3px 0 0 0 var(--bd)}
+.ms .tx{flex:1;font-size:8px;line-height:1.8}
+.ms .pb{height:8px;background:#000;margin-top:6px;border:1px solid #2a3380}
+.ms .pb i{display:block;height:100%;background:var(--green)}
+.ms .btn{font-size:8px;padding:8px}
+.sbanner{display:flex;flex-direction:column;align-items:stretch;gap:10px;background:linear-gradient(#2a1a78,#10164a);padding:10px;margin:3px 3px 16px;--bd:var(--yellow);box-shadow:0 -3px 0 0 var(--bd),0 3px 0 0 var(--bd),-3px 0 0 0 var(--bd),3px 0 0 0 var(--bd)}
+.sbanner canvas{width:100%;height:auto;aspect-ratio:150/50;flex:none;background:radial-gradient(#5a46d0,#1a1360)}
+.sbanner .tx{font-size:8px;line-height:2}
+.sbanner h3{margin:0 0 6px;font-weight:400;font-size:12px;color:var(--yellow);text-shadow:2px 2px 0 #000}
+.srow{display:flex;gap:10px;margin-bottom:14px}
+.srow .btn{flex:1;text-align:center;font-size:10px;line-height:1.9}
+.odds{font-size:7px;line-height:2;color:#9fb0ff}
+
+/* modal + toast */
+#modal{position:absolute;inset:0;background:rgba(3,4,18,.8);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;overflow-y:auto}
+#modal.on{display:flex}
+.box{background:#10164a;padding:16px;width:100%;max-width:360px;margin:auto;--bd:var(--yellow);text-align:center;font-size:9px;line-height:1.9;
+  box-shadow:0 -4px 0 0 var(--bd),0 4px 0 0 var(--bd),-4px 0 0 0 var(--bd),4px 0 0 0 var(--bd)}
+.box h3{font-weight:400;font-size:18px;margin:2px 0 10px;color:var(--yellow);text-shadow:3px 3px 0 #000}
+.box p{margin:6px 0}
+.box ul{text-align:left;padding-left:16px;margin:8px 0}
+.box li{margin-bottom:8px}
+.box .row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.pull{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+.pull.one{grid-template-columns:1fr;width:120px;margin:12px auto}
+.pc{position:relative;padding:2px;background:#000;font-size:6px;--bd:var(--rc);animation:rev .35s steps(4) both}
+.pc canvas{width:100%;height:auto;aspect-ratio:28/30}
+.pc i{position:absolute;left:0;right:0;bottom:-2px;font-style:normal;background:rgba(0,0,0,.8);color:var(--rc);padding:1px 0}
+@keyframes rev{from{transform:scale(.2);filter:brightness(4)}to{transform:scale(1);filter:none}}
+#toast{position:absolute;left:12px;right:12px;bottom:84px;text-align:center;background:#000;border:3px solid var(--yellow);padding:10px;font-size:8px;z-index:120;display:none;line-height:1.7}
+#toast.on{display:block}
+
+/* battle */
+#cv{position:absolute;inset:0;width:100%;height:100%}
+#pops,#hud{position:absolute;inset:0;pointer-events:none}
+#hud button,#hud .tap{pointer-events:auto}
+.pop{position:absolute;transform:translate(-50%,-50%);font-size:13px;white-space:nowrap;text-shadow:2px 0 #000,-2px 0 #000,0 2px #000,0 -2px #000,2px 2px #000,-2px -2px #000,2px -2px #000,-2px 2px #000;animation:pop .85s steps(9) forwards}
+.pop.foe{color:#fff}
+.pop.crit{color:var(--yellow);font-size:16px}
+.pop.me{color:#ff6a4a}
+.pop.cy{color:var(--cyan);font-size:11px}
+.pop.bad{color:#ff6a4a;font-size:10px}
+@keyframes pop{0%{opacity:0;margin-top:6px}12%{opacity:1;margin-top:0}100%{opacity:0;margin-top:-34px}}
+#tTimer{position:absolute;left:12px;top:10px;font-size:20px;color:#fff;text-shadow:3px 3px 0 #000,-1px -1px 0 #000}
+#btnPause{position:absolute;left:14px;top:48px;width:34px;height:34px;background:rgba(0,0,0,.55);font-size:12px;box-shadow:0 0 0 3px #fff}
+#eBar{position:absolute;left:86px;right:12px;top:12px;height:16px;background:#000;border:3px solid #000;box-shadow:0 0 0 2px #fff;transform:skewX(-14deg)}
+#eLost,#eFill{position:absolute;left:0;top:0;bottom:0;background:#d01818;width:100%;transition:width .9s .35s steps(10)}
+#eFill{background:#22dd22;transition:width .2s steps(4)}
+#eName{position:absolute;left:88px;top:36px;font-size:8px;text-shadow:2px 2px 0 #000}
+#eHp{position:absolute;right:14px;top:36px;font-size:12px;text-shadow:2px 2px 0 #000}
+#eTeam{position:absolute;right:8px;top:62px;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.ft{width:40px;position:relative;margin:3px}
+.ft.on{width:58px}
+.ft canvas{width:100%;height:auto;aspect-ratio:28/30;box-shadow:0 0 0 3px var(--ec,#f0452c),0 0 0 6px #000;background:#000}
+.ft.dead canvas{filter:grayscale(1) brightness(.4)}
+.hpb{height:5px;background:#000;margin-top:5px}
+.hpb i{display:block;height:100%;background:#22dd22;width:100%}
+#pBench{position:absolute;left:12px;top:42%;display:flex;flex-direction:column;gap:12px}
+.bt{width:52px;margin:3px;position:relative;display:block}
+.bt canvas{width:100%;height:auto;aspect-ratio:28/30;box-shadow:0 0 0 3px var(--ec,#40d95a),0 0 0 6px #000;background:#000}
+.bt.dead canvas{filter:grayscale(1) brightness(.4)}
+.bt.cd{opacity:.5}
+#combo{position:absolute;right:14px;top:44%;text-align:right;font-style:italic;display:none;text-shadow:3px 3px 0 #000}
+#combo b{font-size:30px;font-weight:400;color:#fff}
+#combo span{font-size:10px;margin-left:4px}
+#combo.bump{animation:bump .12s steps(3)}
+@keyframes bump{50%{transform:scale(1.25)}}
+#orbs{position:absolute;right:10px;top:54%;display:grid;grid-template-columns:repeat(2,18px);gap:6px 8px;pointer-events:auto}
+#orbs i{width:18px;height:18px;background:rgba(190,150,110,.45);clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%)}
+#orbs i:nth-child(even){transform:translateY(10px)}
+#orbs i.on{background:radial-gradient(circle at 35% 30%,#ffe9a0 0 15%,#ff9a1c 16% 100%)}
+#orbs.full i{animation:orb .5s steps(2) infinite}
+@keyframes orb{50%{filter:brightness(1.6)}}
+#orbs.full::after{content:"TAP!";position:absolute;left:-44px;top:-18px;font-size:8px;color:var(--yellow);text-shadow:2px 2px 0 #000}
+#pSer{position:absolute;left:14px;bottom:122px;font-size:6px;background:rgba(0,0,0,.7);padding:3px 4px;line-height:1.2}
+#pPort{position:absolute;left:12px;bottom:34px;width:78px}
+#pPort canvas{width:100%;height:auto;aspect-ratio:28/30;box-shadow:0 0 0 3px #a05cf2,0 0 0 6px #000;background:#000}
+#rush{position:absolute;right:-16px;bottom:0;width:10px;height:100%;background:#000;box-shadow:0 0 0 2px #fff}
+#rush i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(#ffb020,#ff6a1c);height:0}
+#pPort.rdy canvas{animation:glow .5s steps(2) infinite}
+@keyframes glow{50%{box-shadow:0 0 0 3px #ffd23a,0 0 0 6px #ff9420,0 0 14px 6px #ffd23a}}
+#pHpNum{position:absolute;left:24px;bottom:11px;font-size:9px;text-shadow:2px 2px 0 #000;white-space:nowrap;z-index:2}
+#pBar{position:absolute;left:12px;right:12px;bottom:10px;height:14px;background:#000;border:3px solid #000;box-shadow:0 0 0 2px #fff;transform:skewX(-14deg)}
+#pFill{position:absolute;left:0;top:0;bottom:0;width:100%;background:#22dd22;transition:width .15s steps(3)}
+#pFill.mid{background:#ddc022}#pFill.lo{background:#e03030}
+#kiWrap{position:absolute;right:12px;bottom:146px;width:232px;display:flex;align-items:center;gap:6px;pointer-events:none}
+#kiNum{font-size:13px;color:var(--cyan);width:40px;text-align:right;text-shadow:2px 2px 0 #000}
+#kiSeg{flex:1;display:grid;grid-template-columns:repeat(10,1fr);gap:2px;background:#000;padding:2px;box-shadow:0 0 0 2px #fff}
+#kiSeg i{height:12px;background:#12354a}
+#kiSeg i.on{background:var(--cyan)}
+#cards,#defense{position:absolute;right:12px;bottom:34px;width:232px;height:104px;display:flex;gap:8px}
+.card{position:relative;flex:1;background:var(--cc);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 -3px 0 0 #000,0 3px 0 0 #000,-3px 0 0 0 #000,3px 0 0 0 #000,inset 0 0 0 3px rgba(255,255,255,.75),inset 0 -10px 0 rgba(0,0,0,.2);margin:3px 0}
+.card canvas{width:100%;height:auto;padding:10px 12px 22px}
+.card small{position:absolute;left:0;right:0;bottom:7px;text-align:center;font-size:6px;color:#fff;text-shadow:1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000;letter-spacing:0}
+.card i{position:absolute;top:-6px;right:-6px;background:#0a4d6a;border:3px solid #000;color:#fff;font-style:normal;font-size:9px;padding:4px 3px;box-shadow:inset 0 0 0 2px var(--cyan);text-shadow:1px 1px 0 #000}
+.card.off{filter:grayscale(.75) brightness(.55)}
+.card.empty{background:#10164a;box-shadow:0 -3px 0 0 #000,0 3px 0 0 #000,-3px 0 0 0 #000,3px 0 0 0 #000;filter:none}
+.card:active:not(.off){transform:translateY(3px)}
+#defense{display:none}
+#defense.on{display:flex}
+#defense button{flex:1;margin:3px 0;font-size:11px;text-shadow:2px 2px 0 #000;line-height:1.7;
+  box-shadow:0 -3px 0 0 #000,0 3px 0 0 #000,-3px 0 0 0 #000,3px 0 0 0 #000,inset 0 0 0 3px rgba(255,255,255,.7)}
+#bGuard{background:#2a6af0}#bVanish{background:#9a3ae8}
+#defense small{display:block;font-size:7px;margin-top:6px}
+#defense button.off{filter:grayscale(1) brightness(.5)}
+#cards.hide{display:none}
+#ult{position:absolute;right:12px;bottom:176px;width:232px;height:38px;display:none;background:linear-gradient(#ffe36a,#ff9a1c);color:#000;font-size:10px;
+  box-shadow:0 -3px 0 0 #000,0 3px 0 0 #000,-3px 0 0 0 #000,3px 0 0 0 #000,inset 0 -5px 0 rgba(0,0,0,.25);animation:glow2 .6s steps(2) infinite;margin:3px 0}
+#ult.on{display:block}
+@keyframes glow2{50%{filter:brightness(1.3)}}
+#banner{position:absolute;left:0;right:0;top:30%;text-align:center;font-size:24px;color:#fff;display:none;text-shadow:4px 4px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000}
+#banner.on{display:block;animation:ban .35s steps(5)}
+#banner small{display:block;font-size:9px;margin-top:10px;color:var(--yellow)}
+@keyframes ban{from{transform:scale(2.2);opacity:0}to{transform:scale(1);opacity:1}}
+#tip{position:absolute;left:14px;right:14px;bottom:224px;text-align:center;font-size:8px;line-height:1.8;background:rgba(0,0,0,.78);padding:8px;display:none;border:3px solid var(--cyan)}
+#tip.on{display:block}
+#cutin{position:absolute;inset:0;display:none;pointer-events:none;overflow:hidden}
+#cutin.on{display:block}
+#cutin .band{position:absolute;left:-10%;right:-10%;top:30%;height:150px;background:repeating-linear-gradient(100deg,#ff9a1c 0 14px,#ffd23a 14px 28px);transform:skewY(-6deg);animation:cslide .25s steps(5) both;border-top:5px solid #000;border-bottom:5px solid #000}
+#cutin canvas{position:absolute;left:6%;top:calc(30% - 40px);width:170px;height:182px;animation:cslide .3s steps(5) both;box-shadow:0 0 0 4px #000}
+#cutin .nm{position:absolute;left:0;right:0;top:calc(30% + 62px);text-align:right;padding-right:22px;font-size:15px;color:#fff;text-shadow:3px 3px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000;animation:cslide .35s steps(5) both}
+#cutin .nm small{display:block;font-size:8px;color:#000;text-shadow:none;margin-bottom:8px}
+@keyframes cslide{from{transform:translateX(120%) skewY(-6deg)}to{transform:translateX(0) skewY(-6deg)}}
+#cutin canvas{animation-name:cslide2}
+@keyframes cslide2{from{transform:translateX(160%)}to{transform:translateX(0)}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important}}
+#elchart{position:absolute;left:14px;top:92px;background:rgba(0,0,0,.6);padding:4px 5px 3px;font-size:6px;line-height:1;box-shadow:0 0 0 2px #fff;pointer-events:none}
+#elchart b{display:block;font-weight:400;color:#fff;margin-bottom:4px;letter-spacing:0}
+#elchart .er{display:flex;align-items:center;gap:2px;margin-bottom:3px;padding:1px;opacity:.85}
+#elchart .er i{display:block;width:8px;height:8px}
+#elchart .er u{text-decoration:none;color:#fff;width:6px;text-align:center}
+#elchart .er.good{opacity:1;box-shadow:0 0 0 1px #7dff7d;background:rgba(125,255,125,.25)}
+#elchart .er.bad{opacity:1;box-shadow:0 0 0 1px #ff6a5a;background:rgba(255,90,70,.25)}
+.eltab{text-align:left;margin:8px 0;font-size:8px;line-height:2.1}
+.eltab span{display:inline-block;padding:0 4px;color:#000}
+.btabs{display:flex;gap:10px;margin:0 3px 16px}
+.btabs button{flex:1;padding:10px 4px;margin:3px;font-size:9px;background:#0a0e33;color:#9fb0ff;text-shadow:2px 2px 0 #000;box-shadow:0 -3px 0 0 #2a3380,0 3px 0 0 #2a3380,-3px 0 0 0 #2a3380,3px 0 0 0 #2a3380}
+.btabs button.on{background:var(--yellow);color:#000;text-shadow:none;box-shadow:0 -3px 0 0 #000,0 3px 0 0 #000,-3px 0 0 0 #000,3px 0 0 0 #000}
+.btabs button#bt1.on{background:#ff6ad8}
+.sbanner.ultra{--bd:#ff6ad8;background:linear-gradient(#5a1a78,#1a1060)}
+.sbanner.ultra h3{color:#ff9ae8}
+.sbanner.ultra canvas{background:radial-gradient(#d04ab8,#3a1070)}
+.m-hunt .chl{font-size:8px;line-height:1.4;margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 3px 14px}
+.chips button{padding:6px 7px;font-size:6px;background:#0a0e33;color:#9fb0ff;box-shadow:0 0 0 2px #2a3380}
+.chips button.on{background:var(--yellow);color:#000;box-shadow:0 0 0 2px #000}
+.rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.rc small{display:block;font-size:5px;margin-top:2px}
+.rc .lv{display:block;font-size:5px;color:#9fb0ff;margin-top:2px}
+.strow{display:inline-flex;gap:1px;vertical-align:middle}
+.strow i.s{display:block;width:7px;height:7px;background:#2a3050;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.strow i.s.g{background:#ffd23a}
+.strow i.s.b{background:#35b8ff}
+.rc .strow{margin-top:3px}
+.rc .strow i.s{width:6px;height:6px}
+.xpb{height:6px;background:#000;margin:4px 0;box-shadow:0 0 0 1px #2a3380}
+.xpb i{display:block;height:100%;background:var(--cyan)}
+.btabs.six{gap:5px}
+.btabs.six button{font-size:11px;padding:10px 0;color:var(--bc,#9fb0ff)}
+.btabs.six button.on{background:var(--bc);color:#000}
+.timer{font-size:8px;color:#9fb0ff;text-align:center;margin:-4px 0 10px}
+.pity{margin:0 3px 12px;font-size:7px;color:#9fb0ff;line-height:1.8}
+.pbar{height:9px;background:#000;box-shadow:0 0 0 2px #2a3380;margin-bottom:5px}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23a,#ff6ad8);width:0}
+.ch{display:flex;align-items:center;gap:10px;background:#0a0e33;padding:10px;margin:3px 3px 16px;--bd:#2a3380;box-shadow:0 -3px 0 0 var(--bd),0 3px 0 0 var(--bd),-3px 0 0 0 var(--bd),3px 0 0 0 var(--bd)}
+.ch{display:flex;align-items:center;gap:10px;background:#0a0e33;padding:10px;margin:3px 3px 16px;--bd:#2a3380;box-shadow:0 -3px 0 0 var(--bd),0 3px 0 0 var(--bd),-3px 0 0 0 var(--bd),3px 0 0 0 var(--bd)}
+.ch canvas{width:58px;height:62px;flex:none}
+.ch .tx{flex:1;font-size:7px;line-height:1.8}
+.ch h3{font-size:9px;font-weight:400;color:var(--yellow);margin:0 0 4px}
+.ch .prog{height:7px;background:#000;margin-top:5px}
+.ch .prog i{display:block;height:100%;background:var(--green)}
+.ch .btn{font-size:7px;padding:8px}
+.story{background:#0a0e33;padding:12px;margin:3px 3px 14px;--bd:#2a3380;box-shadow:0 -3px 0 0 var(--bd),0 3px 0 0 var(--bd),-3px 0 0 0 var(--bd),3px 0 0 0 var(--bd)}
+.story h3{margin:0 0 8px;color:var(--yellow);font-weight:400;font-size:12px}
+.story p{font-size:8px;line-height:2;margin:6px 0}
+.story .reward{color:var(--cyan);font-size:7px;margin-top:8px}
+.story .btn{font-size:8px;padding:8px;margin-top:8px}
+.lb{display:flex;align-items:center;gap:8px;background:#0a0e33;padding:8px;margin:3px 3px 10px;--bd:#2a3380;box-shadow:0 -3px 0 0 var(--bd),0 3px 0 0 var(--bd),-3px 0 0 0 var(--bd),3px 0 0 0 var(--bd)}
+.lb b{width:22px;text-align:center;color:var(--yellow);font-weight:400;font-size:12px}
+.lb canvas{width:42px;height:46px}
+.lb .tx{flex:1;font-size:7px;line-height:1.6}
+.lb .score{font-size:9px;color:var(--cyan)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:3px}
+.stat{background:#0a0e33;padding:10px;--bd:#2a3380;text-align:center;box-shadow:0 -3px 0 0 var(--bd),0 3px 0 0 var(--bd),-3px 0 0 0 var(--bd),3px 0 0 0 var(--bd)}
+.stat b{display:block;font-size:18px;color:var(--yellow);font-weight:400;text-shadow:2px 2px 0 #000}
+.stat span{display:block;font-size:6px;color:#9fb0ff;margin-top:4px}
+.profile{background:#0a0e33;padding:12px;margin:3px;--bd:#2a3380;box-shadow:0 -3px 0 0 var(--bd),0 3px 0 0 var(--bd),-3px 0 0 0 var(--bd),3px 0 0 0 var(--bd)}
+.profile h3{font-weight:400;color:var(--yellow);font-size:12px;margin:0 0 10px}
+.profile label{display:block;font-size:7px;color:#9fb0ff;margin:8px 0 4px}
+.profile input,.profile select{width:100%;background:#05071a;border:2px solid #2a3380;color:#fff;padding:8px;font:inherit;font-size:8px;outline:none}
+.profile input:focus,.profile select:focus{border-color:var(--cyan)}
+.notice{padding:10px;margin:3px;background:#141b52;border-left:5px solid var(--cyan);font-size:7px;line-height:1.8}
+hr.sep{border:0;border-top:3px solid #2a3380;margin:16px 3px}
+.footer{padding:12px 3px 28px;text-align:center;color:#6974b5;font-size:6px;line-height:1.8}
+#load{position:absolute;inset:0;background:#05071a;z-index:200;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#load h1{font-size:24px;font-weight:400;color:var(--yellow);text-shadow:4px 4px 0 #000;margin:0 0 14px}
+#load p{font-size:8px;color:#9fb0ff;margin:0 0 18px}
+#load .lp{width:220px;height:14px;background:#000;border:3px solid #fff;box-shadow:0 0 0 3px #000}
+#load .lp i{display:block;width:0;height:100%;background:var(--cyan)}
+#load small{margin-top:12px;font-size:6px;color:#5964a8}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+<div id="load">
+  <h1>KI LEGENDS</h1>
+  <p>ALL-STAR PIXEL CLASH</p>
+  <div class="lp"><i id="loadBar"></i></div>
+  <small id="loadTxt">LOADING...</small>
+</div>
+
+<div id="home" class="screen on">
+  <canvas id="homeCv"></canvas>
+  <div id="lead">
+    <b id="playerName">PLAYER</b>
+    <span>WELCOME BACK, WARRIOR</span>
+  </div>
+
+  <div class="side">
+    <button class="btn" id="btnMail">MAIL</button>
+    <button class="btn" id="btnSettings">SETTINGS</button>
+  </div>
+
+  <div class="modes">
+    <button class="mode m-story" id="modeStory">
+      <span>STORY</span>
+      <small>CHAPTERS</small>
+    </button>
+    <button class="mode m-pvp" id="modePvp">
+      <span>PVP</span>
+      <small>RANKED</small>
+    </button>
+    <button class="mode m-hunt" id="modeHunt">
+      <span>HUNT</span>
+      <small class="chl">MISSIONS</small>
+    </button>
+  </div>
+</div>
+
+<div id="roster" class="screen">
+  <div class="pad">
+    <h2>TEAM</h2>
+
+    <div class="slots" id="teamSlots"></div>
+
+    <div class="detail px" id="charDetail"></div>
+
+    <div class="rhead" style="--sc:#ff6ad8">
+      WARRIORS <span>YOUR COLLECTION</span>
+    </div>
+
+    <div class="rgrid" id="rosterGrid"></div>
+  </div>
+</div>
+
+<div id="summon" class="screen">
+  <div class="pad">
+    <h2>SUMMON</h2>
+
+    <div class="btabs">
+      <button id="bt0" class="on">LEGENDS</button>
+      <button id="bt1">ULTRA</button>
+    </div>
+
+    <div id="summonBanners"></div>
+  </div>
+</div>
+
+<div id="missions" class="screen">
+  <div class="pad">
+    <h2>MISSIONS</h2>
+    <div class="chips" id="missionTabs"></div>
+    <div id="missionList"></div>
+  </div>
+</div>
+
+<div id="story" class="screen">
+  <div class="pad">
+    <h2>STORY</h2>
+    <div id="storyList"></div>
+  </div>
+</div>
+
+<div id="pvp" class="screen">
+  <div class="pad">
+    <h2>PVP</h2>
+    <div class="notice">
+      Fight other warriors and climb the rankings.
+      Your strongest team will be used.
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <b id="pvpRank">100</b>
+        <span>RANK</span>
+      </div>
+      <div class="stat">
+        <b id="pvpRating">1000</b>
+        <span>RATING</span>
+      </div>
+    </div>
+
+    <div id="pvpOpp"></div>
+  </div>
+</div>
+
+<div id="profile" class="screen">
+  <div class="pad">
+    <h2>PROFILE</h2>
+
+    <div class="profile">
+      <h3>PLAYER CARD</h3>
+
+      <label>NAME</label>
+      <input id="nameInput" maxlength="16" placeholder="PLAYER">
+
+      <label>LEVEL</label>
+      <div id="profileLevel"></div>
+
+      <label>EXPERIENCE</label>
+      <div class="xpb"><i id="profileXp"></i></div>
+
+      <label>GEMS</label>
+      <div id="profileGems"></div>
+
+      <button class="btn" id="saveName">SAVE NAME</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <b id="statWins">0</b>
+        <span>WINS</span>
+      </div>
+      <div class="stat">
+        <b id="statBattles">0</b>
+        <span>BATTLES</span>
+      </div>
+      <div class="stat">
+        <b id="statSummons">0</b>
+        <span>SUMMONS</span>
+      </div>
+      <div class="stat">
+        <b id="statChars">0</b>
+        <span>WARRIORS</span>
+      </div>
+    </div>
+
+    <div class="notice">
+      Your progress is automatically saved on this device.
+    </div>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="home on" data-screen="home">
+    <canvas width="27" height="27" data-icon="home"></canvas>
+    <span>HOME</span>
+  </button>
+
+  <button data-screen="roster">
+    <canvas width="27" height="27" data-icon="team"></canvas>
+    <span>TEAM</span>
+  </button>
+
+  <button data-screen="summon">
+    <canvas width="27" height="27" data-icon="summon"></canvas>
+    <span>SUMMON</span>
+  </button>
+
+  <button data-screen="missions">
+    <canvas width="27" height="27" data-icon="missions"></canvas>
+    <span>MISSIONS</span>
+  </button>
+
+  <button data-screen="profile">
+    <canvas width="27" height="27" data-icon="profile"></canvas>
+    <span>PROFILE</span>
+  </button>
+</div>
+
+<div id="battle" class="screen">
+  <canvas id="cv"></canvas>
+  <div id="pops"></div>
+
+  <div id="hud">
+    <div id="tTimer">60</div>
+    <button id="btnPause">Ⅱ</button>
+
+    <div id="eBar">
+      <i id="eLost"></i>
+      <i id="eFill"></i>
+    </div>
+
+    <div id="eName">ENEMY</div>
+    <div id="eHp">100%</div>
+
+    <div id="eTeam"></div>
+    <div id="pBench"></div>
+
+    <div id="combo">
+      <b id="comboNum">0</b>
+      <span>HIT</span>
+    </div>
+
+    <div id="orbs"></div>
+
+    <div id="pSer">POWER</div>
+
+    <div id="pPort">
+      <canvas id="pPortCv"></canvas>
+      <div id="rush"><i></i></div>
+    </div>
+
+    <div id="pHpNum">100%</div>
+    <div id="pBar">
+      <i id="pFill"></i>
+    </div>
+
+    <div id="kiWrap">
+      <div id="kiNum">100</div>
+      <div id="kiSeg"></div>
+    </div>
+
+    <button id="ult">ULTIMATE</button>
+
+    <div id="cards"></div>
+
+    <div id="defense">
+      <button id="bGuard">GUARD<small>BLOCK</small></button>
+      <button id="bVanish">VANISH<small>STEP</small></button>
+    </div>
+
+    <div id="tip"></div>
+    <div id="banner">
+      <span id="bannerTxt"></span>
+      <small id="bannerSub"></small>
+    </div>
+
+    <div id="elchart"></div>
+  </div>
+
+  <div id="cutin">
+    <div class="band"></div>
+    <canvas id="cutinCv"></canvas>
+    <div class="nm">
+      <small>ULTIMATE</small>
+      <span id="cutinName"></span>
+    </div>
+  </div>
+</div>
+
+<div id="modal">
+  <div class="box" id="modalBox"></div>
+</div>
+
+<div id="toast"></div>
+
+</div>
+
+<script>
+'use strict';
+
+/* =========================================================
+   KI LEGENDS
+   ALL-STAR PIXEL CLASH
+   ========================================================= */
+
+const $ = id => document.getElementById(id);
+const qs = s => document.querySelector(s);
+const qsa = s => [...document.querySelectorAll(s)];
+
+const home = $('home');
+const roster = $('roster');
+const summon = $('summon');
+const missions = $('missions');
+const story = $('story');
+const pvp = $('pvp');
+const profile = $('profile');
+const battle = $('battle');
+
+const cv = $('cv');
+const ctx = cv.getContext('2d');
+
+const homeCv = $('homeCv');
+const homeCtx = homeCv.getContext('2d');
+
+const pPortCv = $('pPortCv');
+const pPortCtx = pPortCv.getContext('2d');
+
+const cutinCv = $('cutinCv');
+const cutinCtx = cutinCv.getContext('2d');
+
+let W = 480;
+let H = 854;
+let dpr = Math.min(window.devicePixelRatio || 1,2);
+
+function resizeCanvas(c){
+  if(!c)return;
+  const r=c.getBoundingClientRect();
+  const w=Math.max(1,Math.floor(r.width*dpr));
+  const h=Math.max(1,Math.floor(r.height*dpr));
+  if(c.width!==w || c.height!==h){
+    c.width=w;
+    c.height=h;
+  }
+}
+
+function resizeAll(){
+  resizeCanvas(homeCv);
+  resizeCanvas(cv);
+  resizeCanvas(pPortCv);
+  resizeCanvas(cutinCv);
+
+  W=cv.clientWidth||480;
+  H=cv.clientHeight||854;
+
+  if(homeCv){
+    homeCv.width=Math.floor((homeCv.clientWidth||480)*dpr);
+    homeCv.height=Math.floor((homeCv.clientHeight||854)*dpr);
+  }
+}
+
+window.addEventListener('resize',resizeAll);
+window.addEventListener('orientationchange',()=>setTimeout(resizeAll,150));
+
+/* =========================================================
+   SAVE DATA
+   ========================================================= */
+
+const SAVE_KEY='ki_legends_save_v14';
+
+const DEFAULT_SAVE={
+  name:'PLAYER',
+  level:1,
+  xp:0,
+  gems:1000,
+  wins:0,
+  battles:0,
+  summons:0,
+  rating:1000,
+  rank:100,
+  story:1,
+  selected:0,
+  team:[0,1,2],
+  owned:[0,1,2],
+  missions:{},
+  claimed:{},
+  pity:0,
+  ultraPity:0
+};
+
+let S;
+
+function cloneDefault(){
+  return JSON.parse(JSON.stringify(DEFAULT_SAVE));
+}
+
+function loadSave(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw){
+      S=cloneDefault();
+      saveGame();
+      return;
+    }
+
+    const parsed=JSON.parse(raw);
+    S=Object.assign(cloneDefault(),parsed);
+
+    if(!Array.isArray(S.team))S.team=[0,1,2];
+    if(!Array.isArray(S.owned))S.owned=[0,1,2];
+    if(!S.missions)S.missions={};
+    if(!S.claimed)S.claimed={};
+
+  }catch(e){
+    S=cloneDefault();
+  }
+}
+
+function saveGame(){
+  try{
+    localStorage.setItem(SAVE_KEY,JSON.stringify(S));
+  }catch(e){}
+}
+
+loadSave();
+
+/* =========================================================
+   GAME DATA
+   ========================================================= */
+
+const COLORS={
+  red:'#f0452c',
+  blue:'#3b82ff',
+  green:'#40d95a',
+  yellow:'#ffd23a',
+  purple:'#a05cf2',
+  pink:'#ff6ad8',
+  cyan:'#35e6ff',
+  orange:'#ff9420'
+};
+
+const ELEMENTS={
+  STRONG:'#ff4c4c',
+  SPEED:'#ffd23a',
+  TECH:'#35e6ff',
+  DARK:'#a05cf2',
+  LIGHT:'#ffffff'
+};
+
+const CHARS=[
+  {
+    id:0,
+    name:'KAI',
+    title:'FLAME WARRIOR',
+    rarity:5,
+    color:'#f0452c',
+    element:'STRONG',
+    power:92,
+    hp:1000,
+    ki:100,
+    speed:8,
+    owned:true
+  },
+  {
+    id:1,
+    name:'RYU',
+    title:'SKY STRIKER',
+    rarity:4,
+    color:'#3b82ff',
+    element:'SPEED',
+    power:84,
+    hp:930,
+    ki:100,
+    speed:10,
+    owned:true
+  },
+  {
+    id:2,
+    name:'MIRA',
+    title:'ENERGY MAGE',
+    rarity:4,
+    color:'#40d95a',
+    element:'TECH',
+    power:80,
+    hp:900,
+    ki:110,
+    speed:7,
+    owned:true
+  },
+  {
+    id:3,
+    name:'ZEN',
+    title:'VOID ASSASSIN',
+    rarity:5,
+    color:'#a05cf2',
+    element:'DARK',
+    power:96,
+    hp:970,
+    ki:120,
+    speed:11,
+    owned:false
+  },
+  {
+    id:4,
+    name:'NOVA',
+    title:'STAR BREAKER',
+    rarity:5,
+    color:'#ffd23a',
+    element:'LIGHT',
+    power:94,
+    hp:1100,
+    ki:100,
+    speed:8,
+    owned:false
+  },
+  {
+    id:5,
+    name:'KIRA',
+    title:'CRIMSON BLADE',
+    rarity:4,
+    color:'#ff6ad8',
+    element:'SPEED',
+    power:86,
+    hp:940,
+    ki:105,
+    speed:10,
+    owned:false
+  },
+  {
+    id:6,
+    name:'ORION',
+    title:'COSMIC GUARDIAN',
+    rarity:5,
+    color:'#35e6ff',
+    element:'TECH',
+    power:98,
+    hp:1200,
+    ki:115,
+    speed:7,
+    owned:false
+  },
+  {
+    id:7,
+    name:'RAI',
+    title:'THUNDER FIST',
+    rarity:4,
+    color:'#ff9420',
+    element:'STRONG',
+    power:88,
+    hp:980,
+    ki:100,
+    speed:9,
+    owned:false
+  },
+  {
+    id:8,
+    name:'SORA',
+    title:'WIND DANCER',
+    rarity:3,
+    color:'#9fb0ff',
+    element:'SPEED',
+    power:72,
+    hp:820,
+    ki:100,
+    speed:12,
+    owned:false
+  },
+  {
+    id:9,
+    name:'VEX',
+    title:'SHADOW FANG',
+    rarity:3,
+    color:'#8d62d6',
+    element:'DARK',
+    power:70,
+    hp:850,
+    ki:100,
+    speed:9,
+    owned:false
+  },
+  {
+    id:10,
+    name:'LUNA',
+    title:'MOONLIGHT HEALER',
+    rarity:3,
+    color:'#8cecff',
+    element:'LIGHT',
+    power:65,
+    hp:900,
+    ki:120,
+    speed:7,
+    owned:false
+  },
+  {
+    id:11,
+    name:'TARO',
+    title:'IRON BRAWLER',
+    rarity:3,
+    color:'#8c8c8c',
+    element:'STRONG',
+    power:68,
+    hp:1050,
+    ki:90,
+    speed:6,
+    owned:false
+  }
+];
+
+const SKILLS=[
+  {name:'STRIKE',cost:10,type:'strike',color:'#f0452c',damage:80},
+  {name:'BLAST',cost:20,type:'blast',color:'#35e6ff',damage:120},
+  {name:'RUSH',cost:30,type:'rush',color:'#ffd23a',damage:170},
+  {name:'SPECIAL',cost:40,type:'special',color:'#a05cf2',damage:220}
+];
+
+const STORY_DATA=[
+  {
+    id:1,
+    title:'THE FIRST SPARK',
+    desc:'A mysterious energy appears in the sky. Kai must discover its source before it falls into the wrong hands.',
+    enemy:[8,9,11],
+    reward:100,
+    xp:80
+  },
+  {
+    id:2,
+    title:'SHADOW RISING',
+    desc:'A dark warrior has entered the city. His power is unlike anything the heroes have seen.',
+    enemy:[9,11,5],
+    reward:150,
+    xp:100
+  },
+  {
+    id:3,
+    title:'STARFALL',
+    desc:'A warrior from beyond the stars arrives with an impossible challenge.',
+    enemy:[4,6,7],
+    reward:200,
+    xp:130
+  },
+  {
+    id:4,
+    title:'VOID BREAK',
+    desc:'The barrier between worlds begins to collapse.',
+    enemy:[3,6,9],
+    reward:250,
+    xp:160
+  },
+  {
+    id:5,
+    title:'FINAL CLASH',
+    desc:'Everything has led to this battle. Only one team will remain standing.',
+    enemy:[3,4,6],
+    reward:500,
+    xp:250
+  }
+];
+
+const MISSIONS=[
+  {id:'m1',name:'FIRST BATTLE',desc:'Complete 1 battle.',goal:1,reward:50,type:'battle'},
+  {id:'m2',name:'WARRIOR',desc:'Win 3 battles.',goal:3,reward:100,type:'wins'},
+  {id:'m3',name:'SUMMONER',desc:'Perform 5 summons.',goal:5,reward:150,type:'summons'},
+  {id:'m4',name:'COLLECTOR',desc:'Own 6 warriors.',goal:6,reward:200,type:'chars'},
+  {id:'m5',name:'RANKED',desc:'Reach 1200 rating.',goal:1200,reward:250,type:'rating'}
+];
+
+const PVP_ENEMIES=[
+  {name:'RIVAL KEN',team:[5,8,9],power:70},
+  {name:'RIVAL ZERO',team:[3,9,10],power:80},
+  {name:'RIVAL NOVA',team:[4,6,7],power:90},
+  {name:'RIVAL REX',team:[0,3,6],power:96}
+];
+
+/* =========================================================
+   DRAWING HELPERS
+   ========================================================= */
+
+function R(x,y,w,h,c){
+  ctx.fillStyle=c;
+  ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
+}
+
+function L(x1,y1,x2,y2,w,c){
+  ctx.strokeStyle=c;
+  ctx.lineWidth=w;
+  ctx.beginPath();
+  ctx.moveTo(x1,y1);
+  ctx.lineTo(x2,y2);
+  ctx.stroke();
+}
+
+const P=(x,y,w,h,col)=>R(x,y,w,h,col);
+const line=(x1,y1,x2,y2,w,col)=>L(x1,y1,x2,y2,w,col);
+
+function rect(c,x,y,w,h,col){
+  c.fillStyle=col;
+  c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
+}
+
+function stroke(c,x,y,w,h,col,lw=2){
+  c.strokeStyle=col;
+  c.lineWidth=lw;
+  c.strokeRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
+}
+
+function circle(c,x,y,r,col){
+  c.fillStyle=col;
+  c.beginPath();
+  c.arc(x,y,r,0,Math.PI*2);
+  c.fill();
+}
+
+function pixelText(c,text,x,y,size,col='#fff',align='left'){
+  c.save();
+  c.font=`${size}px "Courier New",monospace`;
+  c.textAlign=align;
+  c.textBaseline='top';
+  c.fillStyle=col;
+  c.fillText(text,Math.round(x),Math.round(y));
+  c.restore();
+}
+
+/* =========================================================
+   CHARACTER SPRITES
+   ========================================================= */
+
+function drawCharacter(c,ch,x,y,scale=1,flip=false){
+  const color=ch.color||'#fff';
+  c.save();
+  c.translate(x,y);
+
+  if(flip)c.scale(-1,1);
+
+  const s=scale;
+
+  /* shadow */
+  c.fillStyle='rgba(0,0,0,.35)';
+  c.fillRect(-18*s,38*s,36*s,6*s);
+
+  /* legs */
+  c.fillStyle='#111';
+  c.fillRect(-13*s,20*s,9*s,20*s);
+  c.fillRect(4*s,20*s,9*s,20*s);
+
+  /* boots */
+  c.fillStyle='#202020';
+  c.fillRect(-15*s,36*s,12*s,7*s);
+  c.fillRect(3*s,36*s,14*s,7*s);
+
+  /* body */
+  c.fillStyle=color;
+  c.fillRect(-16*s,-4*s,32*s,29*s);
+
+  /* belt */
+  c.fillStyle='#ffd23a';
+  c.fillRect(-17*s,18*s,34*s,5*s);
+
+  /* arms */
+  c.fillStyle=color;
+  c.fillRect(-25*s,-2*s,9*s,23*s);
+  c.fillRect(16*s,-2*s,9*s,23*s);
+
+  /* hands */
+  c.fillStyle='#f0b78d';
+  c.fillRect(-26*s,17*s,10*s,8*s);
+  c.fillRect(16*s,17*s,10*s,8*s);
+
+  /* neck */
+  c.fillStyle='#f0b78d';
+  c.fillRect(-6*s,-12*s,12*s,9*s);
+
+  /* head */
+  c.fillStyle='#f0b78d';
+  c.fillRect(-15*s,-30*s,30*s,21*s);
+
+  /* hair */
+  c.fillStyle='#111';
+  c.fillRect(-18*s,-34*s,36*s,9*s);
+  c.fillRect(-15*s,-40*s,8*s,9*s);
+  c.fillRect(-5*s,-43*s,8*s,12*s);
+  c.fillRect(6*s,-39*s,9*s,9*s);
+
+  /* eyes */
+  c.fillStyle='#000';
+  c.fillRect(-9*s,-20*s,5*s,4*s);
+  c.fillRect(4*s,-20*s,5*s,4*s);
+
+  /* face highlight */
+  c.fillStyle='rgba(255,255,255,.2)';
+  c.fillRect(-12*s,-27*s,7*s,3*s);
+
+  /* energy */
+  if(ch.rarity>=5){
+    c.fillStyle=color;
+    c.globalAlpha=.22;
+    c.fillRect(-30*s,-48*s,60*s,95*s);
+    c.globalAlpha=1;
+  }
+
+  c.restore();
+}
+
+function drawSmallCharacter(c,ch,x,y,scale=1,flip=false){
+  drawCharacter(c,ch,x,y,scale,flip);
+}
+
+function drawEnemyCharacter(c,ch,x,y,scale=1){
+  drawCharacter(c,ch,x,y,scale,true);
+}
+
+/* =========================================================
+   HOME BACKGROUND
+   ========================================================= */
+
+function drawHome(){
+  resizeCanvas(homeCv);
+
+  const c=homeCtx;
+  const w=homeCv.clientWidth||480;
+  const h=homeCv.clientHeight||854;
+
+  c.setTransform(dpr,0,0,dpr,0,0);
+  c.clearRect(0,0,w,h);
+
+  const g=c.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,'#091044');
+  g.addColorStop(.5,'#17156a');
+  g.addColorStop(1,'#080927');
+
+  c.fillStyle=g;
+  c.fillRect(0,0,w,h);
+
+  /* moon */
+  c.fillStyle='#fff0ad';
+  c.beginPath();
+  c.arc(w*.72,h*.27,48,0,Math.PI*2);
+  c.fill();
+
+  c.fillStyle='#17156a';
+  c.beginPath();
+  c.arc(w*.75,h*.25,43,0,Math.PI*2);
+  c.fill();
+
+  /* mountains */
+  c.fillStyle='#0b103d';
+  c.beginPath();
+  c.moveTo(0,h*.62);
+  c.lineTo(w*.2,h*.43);
+  c.lineTo(w*.35,h*.6);
+  c.lineTo(w*.55,h*.38);
+  c.lineTo(w*.72,h*.59);
+  c.lineTo(w*.9,h*.44);
+  c.lineTo(w,h*.58);
+  c.lineTo(w,h);
+  c.lineTo(0,h);
+  c.closePath();
+  c.fill();
+
+  /* ground */
+  c.fillStyle='#080b2a';
+  c.fillRect(0,h*.67,w,h*.33);
+
+  /* energy lines */
+  for(let i=0;i<10;i++){
+    const yy=h*.7+i*22;
+    L(0,yy,w,yy,1,'rgba(53,230,255,.12)');
+  }
+
+  /* stars */
+  for(let i=0;i<36;i++){
+    const x=(i*83)%w;
+    const y=50+((i*47)%(h*.55));
+    const sz=i%4===0?2:1;
+    c.fillStyle=i%5===0?'#ffd23a':'#9fb0ff';
+    c.fillRect(x,y,sz,sz);
+  }
+
+  const lead=CHARS[S.selected]||CHARS[0];
+  drawCharacter(c,lead,w*.5,h*.55,3,false);
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+function showScreen(id){
+  qsa('.screen').forEach(s=>s.classList.remove('on'));
+
+  const el=$(id);
+  if(el)el.classList.add('on');
+
+  qsa('#nav button').forEach(b=>{
+    b.classList.toggle('on',b.dataset.screen===id);
+  });
+
+  if(id==='home')drawHome();
+  if(id==='roster')renderRoster();
+  if(id==='summon')renderSummon();
+  if(id==='missions')renderMissions();
+  if(id==='story')renderStory();
+  if(id==='pvp')renderPvp();
+  if(id==='profile')renderProfile();
+}
+
+qsa('#nav button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(B && !B.over && battle.classList.contains('on'))return;
+    showScreen(btn.dataset.screen);
+  });
+});
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+function updateHeader(){
+  $('hLv') && ($('hLv').textContent=`LV ${S.level}`);
+  $('hGem') && ($('hGem').textContent=S.gems);
+  $('playerName') && ($('playerName').textContent=S.name||'PLAYER');
+
+  const need=100+S.level*50;
+  const pct=Math.min(100,S.xp/need*100);
+
+  if($('hXp'))$('hXp').innerHTML=`<i style="width:${pct}%"></i>`;
+}
+
+function makeHeader(){
+  if($('hdr'))return;
+
+  const h=document.createElement('div');
+  h.id='hdr';
+
+  h.innerHTML=`
+    <div class="hbox">
+      <span id="hLv">LV 1</span>
+    </div>
+    <div class="hbox" style="flex:1">
+      <div id="hXp"><i></i></div>
+    </div>
+    <div class="hbox">
+      <span class="gem"></span>
+      <span id="hGem">1000</span>
+      <button id="hPlus">+</button>
+    </div>
+  `;
+
+  $('app').appendChild(h);
+
+  $('hPlus').addEventListener('click',()=>{
+    showToast('Gems are earned through missions and battles!');
+  });
+}
+
+/* =========================================================
+   ROSTER
+   ========================================================= */
+
+function renderRoster(){
+  const slots=$('teamSlots');
+  const grid=$('rosterGrid');
+  const detail=$('charDetail');
+
+  if(!slots||!grid||!detail)return;
+
+  slots.innerHTML='';
+
+  S.team.forEach((id,index)=>{
+    const ch=CHARS[id];
+    const div=document.createElement('div');
+    div.className='slot px'+(S.selected===id?' sel':'');
+    div.innerHTML=`
+      <canvas width="64" height="68"></canvas>
+      <div>${ch?ch.name:'EMPTY'}</div>
+      <small>${ch?`PWR ${ch.power}`:''}</small>
+    `;
+
+    const c=div.querySelector('canvas');
+    const x=c.getContext('2d');
+    drawCharacter(x,ch,32,45,.72);
+
+    div.addEventListener('click',()=>{
+      S.selected=id;
+      renderRoster();
+      drawHome();
+    });
+
+    slots.appendChild(div);
+  });
+
+  const ch=CHARS[S.selected]||CHARS[0];
+
+  detail.innerHTML=`
+    <canvas class="big" width="96" height="120"></canvas>
+    <div class="tx">
+      <h3>${ch.name}</h3>
+      <span class="tag" style="background:${ch.color}">${ch.element}</span>
+      <span class="stars">${'★'.repeat(ch.rarity)}${'☆'.repeat(5-ch.rarity)}</span>
+      <div>${ch.title}</div>
+      <div>POWER: ${ch.power}</div>
+      <div>HP: ${ch.hp}</div>
+      <div>KI: ${ch.ki}</div>
+      <div>SPEED: ${ch.speed}</div>
+      <div class="eltab">
+        <span style="background:${ch.color}">SPECIAL</span>
+      </div>
+    </div>
+  `;
+
+  const dc=detail.querySelector('canvas');
+  drawCharacter(dc.getContext('2d'),ch,48,75,1.5);
+
+  grid.innerHTML='';
+
+  CHARS.forEach(ch=>{
+    const owned=S.owned.includes(ch.id);
+
+    const card=document.createElement('button');
+    card.className='rc px'+(S.selected===ch.id?' sel':'')+(!owned?' lock':'');
+
+    card.innerHTML=`
+      <canvas width="80" height="86"></canvas>
+      <div>${owned?ch.name:'???'}</div>
+      <small>${owned?ch.title:'LOCKED'}</small>
+      <span class="lv">${owned?'POWER '+ch.power:'SUMMON TO UNLOCK'}</span>
+    `;
+
+    const cc=card.querySelector('canvas');
+    drawSmallCharacter(cc.getContext('2d'),ch,40,57,.85);
+
+    card.addEventListener('click',()=>{
+      if(!owned){
+        showToast('Summon this warrior to unlock them.');
+        return;
+      }
+
+      S.selected=ch.id;
+
+      if(!S.team.includes(ch.id)){
+        S.team[0]=ch.id;
+      }
+
+      saveGame();
+      renderRoster();
+      drawHome();
+      updateHeader();
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+/* =========================================================
+   SUMMON
+   ========================================================= */
+
+let summonTab=0;
+
+function renderSummon(){
+  const root=$('summonBanners');
+  if(!root)return;
+
+  root.innerHTML='';
+
+  const ultra=summonTab===1;
+
+  const banner=document.createElement('div');
+  banner.className='sbanner'+(ultra?' ultra':'');
+
+  const featured=ultra?[3,4,6]:[0,1,2];
+
+  banner.innerHTML=`
+    <canvas width="300" height="100"></canvas>
+    <div class="tx">
+      <h3>${ultra?'ULTRA BANNER':'LEGENDS BANNER'}</h3>
+      <div>${ultra?'High chance for powerful 5★ warriors.':'Summon powerful warriors and build your team.'}</div>
+      <div class="odds">
+        Featured:
+        ${featured.map(id=>CHARS[id].name).join(' • ')}
+      </div>
+    </div>
+    <div class="srow">
+      <button class="btn" id="singlePull">1X<br><small>100 GEMS</small></button>
+      <button class="btn" id="multiPull">10X<br><small>900 GEMS</small></button>
+    </div>
+  `;
+
+  root.appendChild(banner);
+
+  const bc=banner.querySelector('canvas').getContext('2d');
+
+  bc.fillStyle=ultra?'#3a1070':'#1a1360';
+  bc.fillRect(0,0,300,100);
+
+  featured.forEach((id,i)=>{
+    drawCharacter(
+      bc,
+      CHARS[id],
+      55+i*90,
+      70,
+      1.25,
+      false
+    );
+  });
+
+  $('singlePull').addEventListener('click',()=>doSummon(false,ultra));
+  $('multiPull').addEventListener('click',()=>doSummon(true,ultra));
+}
+
+$('bt0').addEventListener('click',()=>{
+  summonTab=0;
+  $('bt0').classList.add('on');
+  $('bt1').classList.remove('on');
+  renderSummon();
+});
+
+$('bt1').addEventListener('click',()=>{
+  summonTab=1;
+  $('bt1').classList.add('on');
+  $('bt0').classList.remove('on');
+  renderSummon();
+});
+
+function weightedCharacter(ultra=false){
+  let pool;
+
+  if(ultra){
+    pool=[
+      ...CHARS.filter(c=>c.rarity===5),
+      ...CHARS.filter(c=>c.rarity===5),
+      ...CHARS.filter(c=>c.rarity===4)
+    ];
+  }else{
+    pool=[
+      ...CHARS.filter(c=>c.rarity===4),
+      ...CHARS.filter(c=>c.rarity===4),
+      ...CHARS.filter(c=>c.rarity===3),
+      ...CHARS.filter(c=>c.rarity===5)
+    ];
+  }
+
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function doSummon(multi,ultra){
+  const cost=multi?900:100;
+
+  if(S.gems<cost){
+    showToast('Not enough gems!');
+    return;
+  }
+
+  S.gems-=cost;
+  S.summons+=multi?10:1;
+
+  const count=multi?10:1;
+  const results=[];
+
+  for(let i=0;i<count;i++){
+    const ch=weightedCharacter(ultra);
+    results.push(ch);
+
+    if(!S.owned.includes(ch.id)){
+      S.owned.push(ch.id);
+    }
+
+    if(ch.rarity>=5){
+      if(ultra)S.ultraPity=0;
+      else S.pity=0;
+    }else{
+      if(ultra)S.ultraPity++;
+      else S.pity++;
+    }
+  }
+
+  saveGame();
+  updateHeader();
+  renderRoster();
+
+  showSummonResults(results);
+}
+
+function showSummonResults(results){
+  $('modal').classList.add('on');
+
+  const box=$('modalBox');
+
+  box.innerHTML=`
+    <h3>SUMMON RESULTS</h3>
+    <p>You received ${results.length} warrior${results.length>1?'s':''}!</p>
+    <div class="pull${results.length===1?' one':''}" id="pullResults"></div>
+    <div class="row">
+      <button class="btn" id="closePull">CONTINUE</button>
+    </div>
+  `;
+
+  const root=$('pullResults');
+
+  results.forEach(ch=>{
+    const d=document.createElement('div');
+    d.className='pc';
+    d.style.setProperty('--rc',ch.color);
+
+    d.innerHTML=`
+      <canvas width="80" height="86"></canvas>
+      <i>${ch.rarity}★</i>
+    `;
+
+    drawSmallCharacter(
+      d.querySelector('canvas').getContext('2d'),
+      ch,
+      40,
+      57,
+      .85
+    );
+
+    root.appendChild(d);
+  });
+
+  $('closePull').addEventListener('click',closeModal);
+}
+
+/* =========================================================
+   MISSIONS
+   ========================================================= */
+
+let missionTab='ALL';
+
+function missionValue(m){
+  if(m.type==='battle')return S.battles;
+  if(m.type==='wins')return S.wins;
+  if(m.type==='summons')return S.summons;
+  if(m.type==='chars')return S.owned.length;
+  if(m.type==='rating')return S.rating;
+  return 0;
+}
+
+function renderMissions(){
+  const tabs=$('missionTabs');
+  const list=$('missionList');
+
+  if(!tabs||!list)return;
+
+  tabs.innerHTML='';
+
+  ['ALL','BATTLE','COLLECTION'].forEach(t=>{
+    const b=document.createElement('button');
+    b.textContent=t;
+    b.className=missionTab===t?'on':'';
+
+    b.addEventListener('click',()=>{
+      missionTab=t;
+      renderMissions();
+    });
+
+    tabs.appendChild(b);
+  });
+
+  list.innerHTML='';
+
+  MISSIONS.forEach(m=>{
+    if(
+      missionTab==='BATTLE' &&
+      !['battle','wins'].includes(m.type)
+    )return;
+
+    if(
+      missionTab==='COLLECTION' &&
+      !['summons','chars'].includes(m.type)
+    )return;
+
+    const value=Math.min(missionValue(m),m.goal);
+    const done=value>=m.goal;
+    const claimed=!!S.claimed[m.id];
+
+    const d=document.createElement('div');
+    d.className='ch';
+
+    d.innerHTML=`
+      <div class="tx">
+        <h3>${m.name}</h3>
+        <div>${m.desc}</div>
+        <div class="prog">
+          <i style="width:${Math.min(100,value/m.goal*100)}%"></i>
+        </div>
+        <div>${value}/${m.goal}</div>
+      </div>
+      <button class="btn" ${!done||claimed?'disabled':''}>
+        ${claimed?'CLAIMED':done?'CLAIM':'LOCKED'}
+      </button>
+    `;
+
+    const b=d.querySelector('button');
+
+    if(done&&!claimed){
+      b.addEventListener('click',()=>{
+        S.claimed[m.id]=true;
+        S.gems+=m.reward;
+        saveGame();
+        updateHeader();
+        renderMissions();
+        showToast(`+${m.reward} GEMS`);
+      });
+    }
+
+    list.appendChild(d);
+  });
+}
+
+/* =========================================================
+   STORY
+   ========================================================= */
+
+function renderStory(){
+  const root=$('storyList');
+  if(!root)return;
+
+  root.innerHTML='';
+
+  STORY_DATA.forEach(ch=>{
+    const unlocked=S.story>=ch.id;
+    const completed=S.story>ch.id;
+
+    const d=document.createElement('div');
+    d.className='story';
+
+    d.innerHTML=`
+      <h3>CHAPTER ${ch.id}: ${ch.title}</h3>
+      <p>${ch.desc}</p>
+      <div class="reward">
+        REWARD: ${ch.reward} GEMS + ${ch.xp} XP
+      </div>
+      <button class="btn" ${!unlocked?'disabled':''}>
+        ${completed?'REPLAY':'START'}
+      </button>
+    `;
+
+    const b=d.querySelector('button');
+
+    if(unlocked){
+      b.addEventListener('click',()=>{
+        startBattle(ch.enemy,'story',ch.id);
+      });
+    }
+
+    root.appendChild(d);
+  });
+}
+
+/* =========================================================
+   PVP
+   ========================================================= */
+
+function renderPvp(){
+  const root=$('pvpOpp');
+  if(!root)return;
+
+  root.innerHTML='';
+
+  PVP_ENEMIES.forEach((enemy,i)=>{
+    const d=document.createElement('div');
+    d.className='lb';
+
+    const avg=Math.round(
+      enemy.team.reduce((a,id)=>a+CHARS[id].power,0)/enemy.team.length
+    );
+
+    d.innerHTML=`
+      <b>${i+1}</b>
+      <canvas width="42" height="46"></canvas>
+      <div class="tx">
+        <strong>${enemy.name}</strong><br>
+        POWER ${avg+enemy.power}
+      </div>
+      <div class="score">${S.rating+i*40}</div>
+    `;
+
+    const c=d.querySelector('canvas').getContext('2d');
+    drawCharacter(c,CHARS[enemy.team[0]],21,31,.55,true);
+
+    const b=document.createElement('button');
+    b.className='btn';
+    b.textContent='FIGHT';
+
+    b.addEventListener('click',()=>{
+      startBattle(enemy.team,'pvp',i);
+    });
+
+    d.appendChild(b);
+    root.appendChild(d);
+  });
+
+  $('pvpRank').textContent=S.rank;
+  $('pvpRating').textContent=S.rating;
+}
+
+/* =========================================================
+   PROFILE
+   ========================================================= */
+
+function renderProfile(){
+  $('nameInput').value=S.name||'PLAYER';
+  $('profileLevel').textContent=`LEVEL ${S.level}`;
+
+  const need=100+S.level*50;
+  $('profileXp').style.width=`${Math.min(100,S.xp/need*100)}%`;
+
+  $('profileGems').textContent=S.gems;
+
+  $('statWins').textContent=S.wins;
+  $('statBattles').textContent=S.battles;
+  $('statSummons').textContent=S.summons;
+  $('statChars').textContent=S.owned.length;
+}
+
+$('saveName').addEventListener('click',()=>{
+  const name=$('nameInput').value.trim().slice(0,16);
+
+  if(name)S.name=name.toUpperCase();
+
+  saveGame();
+  updateHeader();
+  renderProfile();
+  showToast('NAME SAVED');
+});
+
+/* =========================================================
+   MODAL / TOAST
+   ========================================================= */
+
+function closeModal(){
+  $('modal').classList.remove('on');
+}
+
+$('modal').addEventListener('click',e=>{
+  if(e.target===$('modal'))closeModal();
+});
+
+function showToast(msg,time=1800){
+  const t=$('toast');
+
+  t.textContent=msg;
+  t.classList.add('on');
+
+  clearTimeout(showToast._timer);
+
+  showToast._timer=setTimeout(()=>{
+    t.classList.remove('on');
+  },time);
+}
+
+/* =========================================================
+   XP / LEVELING
+   ========================================================= */
+
+function addXp(amount){
+  S.xp+=amount;
+
+  let leveled=false;
+
+  while(S.xp>=100+S.level*50){
+    S.xp-=100+S.level*50;
+    S.level++;
+    leveled=true;
+  }
+
+  if(leveled){
+    showToast(`LEVEL UP! LV ${S.level}`,2200);
+  }
+}
+
+/* =========================================================
+   BATTLE STATE
+   ========================================================= */
+
+let B=null;
+
+function createBattleState(enemyIds,mode,stage){
+  const teamIds=S.team.filter(id=>CHARS[id]);
+
+  while(teamIds.length<3){
+    teamIds.push(S.owned[0]||0);
+  }
+
+  return {
+    mode,
+    stage,
+
+    playerTeam:teamIds.slice(0,3),
+    enemyTeam:enemyIds.slice(0,3),
+
+    playerIndex:0,
+    enemyIndex:0,
+
+    playerHp:CHARS[teamIds[0]].hp,
+    enemyHp:CHARS[enemyIds[0]].hp,
+
+    playerMaxHp:CHARS[teamIds[0]].hp,
+    enemyMaxHp:CHARS[enemyIds[0]].hp,
+
+    ki:60,
+    maxKi:100,
+
+    timer:60,
+
+    combo:0,
+    maxCombo:0,
+
+    over:false,
+    paused:false,
+
+    switchLock:0,
+    vanish:0,
+    guard:false,
+
+    attackTimer:0,
+    enemyAttackTimer:1.2,
+
+    orbs:0,
+
+    cards:[],
+    popups:[],
+
+    lastTime:performance.now()
+  };
+}
+
+/* =========================================================
+   BATTLE START
+   ========================================================= */
+
+function startBattle(enemyIds,mode='story',stage=1){
+  if(!Array.isArray(enemyIds)||enemyIds.length===0)return;
+
+  B=createBattleState(enemyIds,mode,stage);
+
+  showScreen('battle');
+
+  $('nav').style.display='none';
+
+  battle.classList.add('on');
+
+  resizeAll();
+
+  buildBattleHud();
+
+  generateCards();
+
+  updateBattleHud();
+
+  requestAnimationFrame(battleLoop);
+}
+
+function endBattle(win){
+  if(!B||B.over)return;
+
+  B.over=true;
+
+  S.battles++;
+
+  if(win){
+    S.wins++;
+    addXp(B.mode==='story'?STORY_DATA[B.stage-1]?.xp||80:100);
+
+    if(B.mode==='story'){
+      const data=STORY_DATA[B.stage-1];
+
+      if(data){
+        S.gems+=data.reward;
+
+        if(S.story<=B.stage){
+          S.story=B.stage+1;
+        }
+      }
+    }else if(B.mode==='pvp'){
+      S.rating+=30;
+      S.rank=Math.max(1,Math.floor(1500-S.rating));
+      S.gems+=75;
+    }
+  }else{
+    if(B.mode==='pvp'){
+      S.rating=Math.max(0,S.rating-15);
+    }
+  }
+
+  saveGame();
+  updateHeader();
+
+  setTimeout(()=>{
+    showBattleResult(win);
+  },500);
+}
+
+function showBattleResult(win){
+  $('modal').classList.add('on');
+
+  const box=$('modalBox');
+
+  const reward=B.mode==='story'
+    ? STORY_DATA[B.stage-1]?.reward||0
+    : B.mode==='pvp'?75:0;
+
+  box.innerHTML=`
+    <h3>${win?'VICTORY!':'DEFEAT'}</h3>
+    <p>${win?'Your team won the battle!':'Your team was defeated.'}</p>
+    ${win?`<p>REWARD: ${reward} GEMS</p>`:''}
+    <div class="row">
+      <button class="btn" id="resultContinue">CONTINUE</button>
+    </div>
+  `;
+
+  $('resultContinue').addEventListener('click',()=>{
+    closeModal();
+    exitBattle();
+  });
+}
+
+function exitBattle(){
+  B=null;
+
+  $('nav').style.display='flex';
+  battle.classList.remove('on');
+
+  showScreen('home');
+}
+
+/* =========================================================
+   BATTLE HUD
+   ========================================================= */
+
+function buildBattleHud(){
+  const eTeam=$('eTeam');
+  const pBench=$('pBench');
+
+  eTeam.innerHTML='';
+  pBench.innerHTML='';
+
+  B.enemyTeam.forEach((id,i)=>{
+    const ch=CHARS[id];
+
+    const d=document.createElement('div');
+    d.className='ft'+(i===B.enemyIndex?' on':'');
+    d.style.setProperty('--ec',ch.color);
+
+    d.innerHTML=`
+      <canvas width="58" height="62"></canvas>
+      <div class="hpb"><i></i></div>
+    `;
+
+    drawSmallCharacter(
+      d.querySelector('canvas').getContext('2d'),
+      ch,
+      29,
+      42,
+      .65,
+      true
+    );
+
+    eTeam.appendChild(d);
+  });
+
+  B.playerTeam.forEach((id,i)=>{
+    const ch=CHARS[id];
+
+    const d=document.createElement('button');
+    d.className='bt'+(i===B.playerIndex?' cd':'');
+    d.style.setProperty('--ec',ch.color);
+
+    d.innerHTML=`
+      <canvas width="52" height="56"></canvas>
+    `;
+
+    drawSmallCharacter(
+      d.querySelector('canvas').getContext('2d'),
+      ch,
+      26,
+      39,
+      .6
+    );
+
+    d.addEventListener('click',()=>{
+      switchPlayer(i);
+    });
+
+    pBench.appendChild(d);
+  });
+
+  $('orbs').innerHTML='';
+
+  for(let i=0;i<7;i++){
+    const orb=document.createElement('i');
+
+    orb.addEventListener('click',()=>{
+      if(B)collectOrb(i);
+    });
+
+    $('orbs').appendChild(orb);
+  }
+
+  $('kiSeg').innerHTML='';
+
+  for(let i=0;i<10;i++){
+    const seg=document.createElement('i');
+    $('kiSeg').appendChild(seg);
+  }
+}
+
+/* =========================================================
+   CARD GENERATION
+   ========================================================= */
+
+function generateCards(){
+  B.cards=[];
+
+  for(let i=0;i<4;i++){
+    B.cards.push({
+      skill:SKILLS[Math.floor(Math.random()*SKILLS.length)],
+      id:Date.now()+Math.random()
+    });
+  }
+
+  renderCards();
+}
+
+function renderCards(){
+  const root=$('cards');
+  root.innerHTML='';
+
+  B.cards.forEach((card,i)=>{
+    const d=document.createElement('button');
+    d.className='card';
+
+    const skill=card.skill;
+
+    d.style.setProperty('--cc',skill.color);
+
+    const can=B.ki>=skill.cost && !B.over;
+
+    if(!can)d.classList.add('off');
+
+    d.innerHTML=`
+      <canvas width="58" height="62"></canvas>
+      <small>${skill.name}</small>
+      <i>${skill.cost}</i>
+    `;
+
+    drawSkillIcon(
+      d.querySelector('canvas').getContext('2d'),
+      skill,
+      29,
+      31
+    );
+
+    d.addEventListener('click',()=>{
+      if(can)useCard(i);
+    });
+
+    root.appendChild(d);
+  });
+}
+
+function drawSkillIcon(c,skill,x,y){
+  c.clearRect(0,0,c.canvas.width,c.canvas.height);
+
+  c.fillStyle='rgba(0,0,0,.25)';
+  c.fillRect(3,3,c.canvas.width-6,c.canvas.height-6);
+
+  c.fillStyle=skill.color;
+
+  if(skill.type==='strike'){
+    c.fillRect(x-5,y-24,10,48);
+    c.fillRect(x-22,y-5,44,10);
+  }
+
+  if(skill.type==='blast'){
+    c.beginPath();
+    c.arc(x,y,22,0,Math.PI*2);
+    c.fill();
+    c.fillStyle='#fff';
+    c.beginPath();
+    c.arc(x-6,y-6,7,0,Math.PI*2);
+    c.fill();
+  }
+
+  if(skill.type==='rush'){
+    c.fillRect(x-22,y-4,44,8);
+    c.fillRect(x-4,y-22,8,44);
+    c.fillRect(x-17,y-17,34,34);
+  }
+
+  if(skill.type==='special'){
+    c.beginPath();
+    c.moveTo(x,y-25);
+    c.lineTo(x+21,y);
+    c.lineTo(x,y+25);
+    c.lineTo(x-21,y);
+    c.closePath();
+    c.fill();
+    c.fillStyle='#fff';
+    c.fillRect(x-4,y-4,8,8);
+  }
+}
+
+/* =========================================================
+   PLAYER SWITCH
+   ========================================================= */
+
+function switchPlayer(i){
+  if(!B||B.over||B.switchLock>0)return;
+
+  if(i<0||i>=B.playerTeam.length)return;
+  if(i===B.playerIndex)return;
+
+  const old=B.playerIndex;
+
+  B.playerIndex=i;
+  B.playerHp=CHARS[B.playerTeam[i]].hp;
+  B.playerMaxHp=CHARS[B.playerTeam[i]].hp;
+
+  B.switchLock=.5;
+
+  $('pSer').textContent='SWITCH!';
+
+  buildBattleHud();
+  updateBattleHud();
+
+  spawnPopup(
+    W*.25,
+    H*.55,
+    'SWITCH!',
+    'cy'
+  );
+}
+function collectOrb(i){
+  if(!B||B.over)return;
+
+  const orb=$('orbs').children[i];
+  if(!orb)return;
+
+  if(orb.classList.contains('used'))return;
+
+  orb.classList.add('used');
+
+  B.ki=Math.min(B.maxKi,B.ki+10);
+
+  updateBattleHud();
+}
+
+function useCard(i){
+  if(!B||B.over||B.paused)return;
+
+  const card=B.cards[i];
+  if(!card)return;
+
+  const skill=card.skill;
+
+  if(B.ki<skill.cost){
+    showToast('NOT ENOUGH KI');
+    return;
+  }
+
+  B.ki-=skill.cost;
+
+  performAttack(skill);
+
+  B.cards.splice(i,1);
+
+  const newSkill=SKILLS[Math.floor(Math.random()*SKILLS.length)];
+
+  B.cards.push({
+    skill:newSkill,
+    id:Date.now()+Math.random()
+  });
+
+  renderCards();
+  updateBattleHud();
+}
+
+/* =========================================================
+   ATTACK SYSTEM
+   ========================================================= */
+
+function performAttack(skill){
+  if(!B||B.over)return;
+
+  const player=CHARS[B.playerTeam[B.playerIndex]];
+  const enemy=CHARS[B.enemyTeam[B.enemyIndex]];
+
+  let damage=skill.damage;
+
+  damage*=player.power/80;
+
+  const variance=.85+Math.random()*.3;
+  damage*=variance;
+
+  if(skill.type==='special'){
+    damage*=1.35;
+  }
+
+  if(B.combo>0){
+    damage*=1+Math.min(.35,B.combo*.025);
+  }
+
+  damage=Math.round(damage);
+
+  B.enemyHp=Math.max(0,B.enemyHp-damage);
+
+  B.combo++;
+  B.maxCombo=Math.max(B.maxCombo,B.combo);
+
+  spawnPopup(
+    W*.68,
+    H*.38,
+    `-${damage}`,
+    skill.type==='special'?'yl':'rd'
+  );
+
+  showAttackEffect(skill);
+
+  if(B.enemyHp<=0){
+    enemyDefeated();
+    return;
+  }
+
+  B.attackTimer=.25;
+
+  /* enemy counter chance */
+  if(Math.random()<.45){
+    setTimeout(()=>{
+      if(B&&!B.over)enemyAttack();
+    },500);
+  }
+}
+
+function enemyAttack(){
+  if(!B||B.over||B.paused)return;
+
+  const enemy=CHARS[B.enemyTeam[B.enemyIndex]];
+  const player=CHARS[B.playerTeam[B.playerIndex]];
+
+  if(B.vanish>0){
+    B.vanish=0;
+    B.enemyAttackTimer=1.5;
+
+    spawnPopup(
+      W*.35,
+      H*.45,
+      'VANISH!',
+      'cy'
+    );
+
+    return;
+  }
+
+  if(B.guard){
+    B.guard=false;
+
+    const damage=Math.round(enemy.power*.35);
+
+    B.playerHp=Math.max(
+      0,
+      B.playerHp-damage
+    );
+
+    spawnPopup(
+      W*.3,
+      H*.45,
+      `-${damage}`,
+      'yl'
+    );
+
+    spawnPopup(
+      W*.3,
+      H*.51,
+      'GUARD',
+      'cy'
+    );
+  }else{
+    const damage=Math.round(
+      enemy.power*(.7+Math.random()*.4)
+    );
+
+    B.playerHp=Math.max(
+      0,
+      B.playerHp-damage
+    );
+
+    B.combo=0;
+
+    spawnPopup(
+      W*.3,
+      H*.45,
+      `-${damage}`,
+      'rd'
+    );
+  }
+
+  B.enemyAttackTimer=1.2+Math.random()*.8;
+
+  if(B.playerHp<=0){
+    playerDefeated();
+  }
+
+  updateBattleHud();
+}
+
+function enemyDefeated(){
+  B.enemyIndex++;
+
+  if(B.enemyIndex>=B.enemyTeam.length){
+    endBattle(true);
+    return;
+  }
+
+  const next=CHARS[B.enemyTeam[B.enemyIndex]];
+
+  B.enemyHp=next.hp;
+  B.enemyMaxHp=next.hp;
+  B.combo=0;
+
+  updateBattleHud();
+
+  spawnPopup(
+    W*.68,
+    H*.3,
+    'NEXT!',
+    'yl'
+  );
+}
+
+function playerDefeated(){
+  B.playerIndex++;
+
+  if(B.playerIndex>=B.playerTeam.length){
+    endBattle(false);
+    return;
+  }
+
+  const next=CHARS[B.playerTeam[B.playerIndex]];
+
+  B.playerHp=next.hp;
+  B.playerMaxHp=next.hp;
+  B.combo=0;
+
+  buildBattleHud();
+  updateBattleHud();
+
+  spawnPopup(
+    W*.3,
+    H*.3,
+    'SWITCH!',
+    'cy'
+  );
+}
+
+/* =========================================================
+   DEFENSE
+   ========================================================= */
+
+$('bGuard').addEventListener('click',()=>{
+  if(!B||B.over||B.paused)return;
+
+  B.guard=true;
+
+  spawnPopup(
+    W*.3,
+    H*.5,
+    'GUARD',
+    'cy'
+  );
+});
+
+$('bVanish').addEventListener('click',()=>{
+  if(!B||B.over||B.paused)return;
+
+  if(B.ki<15){
+    showToast('NOT ENOUGH KI');
+    return;
+  }
+
+  B.ki-=15;
+  B.vanish=.8;
+
+  spawnPopup(
+    W*.3,
+    H*.5,
+    'VANISH',
+    'cy'
+  );
+
+  updateBattleHud();
+});
+
+/* =========================================================
+   ULTIMATE
+   ========================================================= */
+
+$('ult').addEventListener('click',()=>{
+  if(!B||B.over||B.paused)return;
+
+  const ch=CHARS[B.playerTeam[B.playerIndex]];
+
+  if(B.ki<100){
+    showToast('MAX KI REQUIRED');
+    return;
+  }
+
+  B.ki=0;
+
+  playUltimate(ch);
+});
+
+function playUltimate(ch){
+  $('cutin').classList.add('on');
+  $('cutinName').textContent=ch.name;
+
+  const c=cutinCtx;
+
+  c.clearRect(0,0,cutinCv.width,cutinCv.height);
+
+  c.fillStyle='#080b2a';
+  c.fillRect(0,0,cutinCv.width,cutinCv.height);
+
+  drawCharacter(
+    c,
+    ch,
+    cutinCv.clientWidth*.55,
+    cutinCv.clientHeight*.8,
+    2.8
+  );
+
+  spawnPopup(
+    W*.68,
+    H*.3,
+    'ULTIMATE!',
+    'yl'
+  );
+
+  setTimeout(()=>{
+    if(!$('cutin').classList.contains('on'))return;
+
+    $('cutin').classList.remove('on');
+
+    if(!B||B.over)return;
+
+    const damage=Math.round(
+      ch.power*4.5+Math.random()*120
+    );
+
+    B.enemyHp=Math.max(
+      0,
+      B.enemyHp-damage
+    );
+
+    B.combo++;
+    B.maxCombo=Math.max(B.maxCombo,B.combo);
+
+    spawnPopup(
+      W*.68,
+      H*.4,
+      `-${damage}`,
+      'yl'
+    );
+
+    showAttackEffect({
+      type:'special',
+      color:ch.color
+    });
+
+    if(B.enemyHp<=0){
+      enemyDefeated();
+    }
+
+    updateBattleHud();
+  },1200);
+}
+
+/* =========================================================
+   ATTACK EFFECTS
+   ========================================================= */
+
+let effects=[];
+
+function showAttackEffect(skill){
+  effects.push({
+    type:skill.type,
+    color:skill.color||'#fff',
+    x:W*.65,
+    y:H*.42,
+    t:0,
+    life:.35
+  });
+}
+
+function updateEffects(dt){
+  effects.forEach(e=>{
+    e.t+=dt;
+  });
+
+  effects=effects.filter(e=>e.t<e.life);
+}
+
+function drawEffects(c){
+  effects.forEach(e=>{
+    const p=e.t/e.life;
+
+    c.save();
+
+    c.globalAlpha=1-p;
+
+    if(e.type==='blast'){
+      c.fillStyle=e.color;
+      c.beginPath();
+      c.arc(
+        e.x,
+        e.y,
+        20+p*50,
+        0,
+        Math.PI*2
+      );
+      c.fill();
+
+      c.strokeStyle='#fff';
+      c.lineWidth=3;
+      c.stroke();
+    }
+
+    if(e.type==='strike'){
+      c.strokeStyle=e.color;
+      c.lineWidth=8;
+
+      c.beginPath();
+      c.moveTo(e.x-50,e.y+40);
+      c.lineTo(e.x+40,e.y-40);
+      c.stroke();
+
+      c.beginPath();
+      c.moveTo(e.x-20,e.y+45);
+      c.lineTo(e.x+55,e.y-25);
+      c.stroke();
+    }
+
+    if(e.type==='rush'){
+      c.strokeStyle=e.color;
+      c.lineWidth=5;
+
+      for(let i=0;i<5;i++){
+        c.beginPath();
+        c.moveTo(
+          e.x-60,
+          e.y-30+i*15
+        );
+        c.lineTo(
+          e.x+50,
+          e.y-50+i*20
+        );
+        c.stroke();
+      }
+    }
+
+    if(e.type==='special'){
+      c.fillStyle=e.color;
+      c.globalAlpha=(1-p)*.8;
+
+      c.beginPath();
+      c.arc(
+        e.x,
+        e.y,
+        35+p*100,
+        0,
+        Math.PI*2
+      );
+      c.fill();
+
+      c.strokeStyle='#fff';
+      c.lineWidth=4;
+      c.stroke();
+    }
+
+    c.restore();
+  });
+}
+
+/* =========================================================
+   POPUPS
+   ========================================================= */
+
+function spawnPopup(x,y,text,type='rd'){
+  B.popups.push({
+    x,
+    y,
+    text,
+    type,
+    t:0,
+    life:1
+  });
+}
+
+function updatePopups(dt){
+  if(!B)return;
+
+  B.popups.forEach(p=>{
+    p.t+=dt;
+    p.y-=25*dt;
+  });
+
+  B.popups=B.popups.filter(
+    p=>p.t<p.life
+  );
+}
+
+function drawPopups(c){
+  if(!B)return;
+
+  B.popups.forEach(p=>{
+    const alpha=1-p.t/p.life;
+
+    let color='#fff';
+
+    if(p.type==='rd')color='#ff4c4c';
+    if(p.type==='cy')color='#35e6ff';
+    if(p.type==='yl')color='#ffd23a';
+
+    c.save();
+
+    c.globalAlpha=alpha;
+
+    c.font='bold 18px "Courier New",monospace';
+    c.textAlign='center';
+
+    c.fillStyle='#000';
+    c.fillText(
+      p.text,
+      p.x+2,
+      p.y+2
+    );
+
+    c.fillStyle=color;
+    c.fillText(
+      p.text,
+      p.x,
+      p.y
+    );
+
+    c.restore();
+  });
+}
+
+/* =========================================================
+   BATTLE HUD UPDATE
+   ========================================================= */
+
+function updateBattleHud(){
+  if(!B)return;
+
+  const enemy=CHARS[B.enemyTeam[B.enemyIndex]];
+  const player=CHARS[B.playerTeam[B.playerIndex]];
+
+  const ePct=Math.max(
+    0,
+    B.enemyHp/B.enemyMaxHp*100
+  );
+
+  const pPct=Math.max(
+    0,
+    B.playerHp/B.playerMaxHp*100
+  );
+
+  $('eFill').style.width=`${ePct}%`;
+  $('pFill').style.width=`${pPct}%`;
+
+  $('eHp').textContent=`${Math.ceil(ePct)}%`;
+  $('pHpNum').textContent=`${Math.ceil(pPct)}%`;
+
+  $('eName').textContent=enemy.name;
+  $('pSer').textContent=player.name;
+
+  $('kiNum').textContent=Math.floor(B.ki);
+
+  const segs=[...$('kiSeg').children];
+
+  segs.forEach((s,i)=>{
+    s.classList.toggle(
+      'on',
+      B.ki>=((i+1)*10)
+    );
+  });
+
+  $('comboNum').textContent=B.combo;
+
+  $('tTimer').textContent=Math.max(
+    0,
+    Math.ceil(B.timer)
+  );
+
+  [...$('eTeam').children].forEach((d,i)=>{
+    d.classList.toggle(
+      'on',
+      i===B.enemyIndex
+    );
+  });
+
+  [...$('pBench').children].forEach((d,i)=>{
+    d.classList.toggle(
+      'cd',
+      i===B.playerIndex
+    );
+  });
+
+  const cards=[...$('cards').children];
+
+  cards.forEach((d,i)=>{
+    if(!B.cards[i])return;
+
+    d.classList.toggle(
+      'off',
+      B.ki<B.cards[i].skill.cost
+    );
+  });
+
+  const orbEls=[...$('orbs').children];
+
+  orbEls.forEach((o,i)=>{
+    o.classList.toggle(
+      'used',
+      i>=Math.floor(B.ki/10)
+    );
+  });
+}
+
+/* =========================================================
+   BATTLE DRAW
+   ========================================================= */
+
+function drawBattle(){
+  if(!B)return;
+
+  resizeCanvas(cv);
+
+  const c=ctx;
+
+  const w=cv.clientWidth||480;
+  const h=cv.clientHeight||854;
+
+  c.setTransform(dpr,0,0,dpr,0,0);
+
+  c.clearRect(0,0,w,h);
+
+  /* sky */
+  const sky=c.createLinearGradient(
+    0,0,0,h
+  );
+
+  sky.addColorStop(0,'#0b124d');
+  sky.addColorStop(.45,'#1b2c7a');
+  sky.addColorStop(1,'#100d30');
+
+  c.fillStyle=sky;
+  c.fillRect(0,0,w,h);
+
+  /* moon */
+  c.fillStyle='rgba(255,235,170,.9)';
+  c.beginPath();
+  c.arc(w*.78,h*.2,35,0,Math.PI*2);
+  c.fill();
+
+  /* clouds */
+  for(let i=0;i<5;i++){
+    c.fillStyle='rgba(255,255,255,.06)';
+    c.fillRect(
+      i*100-20,
+      h*.28+(i%2)*30,
+      130,
+      15
+    );
+  }
+
+  /* mountains */
+  c.fillStyle='#101544';
+
+  c.beginPath();
+  c.moveTo(0,h*.53);
+  c.lineTo(w*.18,h*.37);
+  c.lineTo(w*.32,h*.52);
+  c.lineTo(w*.55,h*.34);
+  c.lineTo(w*.72,h*.5);
+  c.lineTo(w*.9,h*.38);
+  c.lineTo(w,h*.51);
+  c.lineTo(w,h*.72);
+  c.lineTo(0,h*.72);
+  c.closePath();
+  c.fill();
+
+  /* arena */
+  c.fillStyle='#18122d';
+  c.fillRect(
+    0,
+    h*.57,
+    w,
+    h*.43
+  );
+
+  /* floor tiles */
+  for(let y=0;y<8;y++){
+    for(let x=0;x<12;x++){
+      c.fillStyle=
+        (x+y)%2===0
+          ?'#1b1738'
+          :'#16132f';
+
+      c.fillRect(
+        x*(w/12),
+        h*.57+y*35,
+        w/12+1,
+        36
+      );
+    }
+  }
+
+  /* floor lines */
+  for(let i=0;i<9;i++){
+    line(
+      0,
+      h*.57+i*35,
+      w,
+      h*.57+i*35,
+      1,
+      'rgba(53,230,255,.08)'
+    );
+  }
+
+  const p=CHARS[B.playerTeam[B.playerIndex]];
+  const e=CHARS[B.enemyTeam[B.enemyIndex]];
+
+  const shake=B.attackTimer>0
+    ? Math.sin(performance.now()/20)*4
+    : 0;
+
+  drawCharacter(
+    c,
+    p,
+    w*.3+shake,
+    h*.64,
+    2.3,
+    false
+  );
+
+  drawEnemyCharacter(
+    c,
+    e,
+    w*.7-shake,
+    h*.64,
+    2.3
+  );
+
+  /* aura */
+  if(B.ki>=100){
+    c.save();
+
+    c.globalAlpha=.18;
+    c.fillStyle=p.color;
+
+    c.beginPath();
+    c.arc(
+      w*.3,
+      h*.58,
+      90+Math.sin(performance.now()/100)*10,
+      0,
+      Math.PI*2
+    );
+    c.fill();
+
+    c.restore();
+  }
+
+  drawEffects(c);
+  drawPopups(c);
+
+  /* combo */
+  if(B.combo>=2){
+    pixelText(
+      c,
+      `${B.combo} HIT`,
+      w*.5,
+      h*.48,
+      20,
+      '#ffd23a',
+      'center'
+    );
+  }
+
+  if(B.paused){
+    c.fillStyle='rgba(0,0,0,.7)';
+    c.fillRect(0,0,w,h);
+
+    pixelText(
+      c,
+      'PAUSED',
+      w*.5,
+      h*.42,
+      28,
+      '#fff',
+      'center'
+    );
+  }
+}
+
+/* =========================================================
+   BATTLE LOOP
+   ========================================================= */
+
+function battleLoop(now){
+  if(!B)return;
+
+  const dt=Math.min(
+    .05,
+    Math.max(0,(now-B.lastTime)/1000)
+  );
+
+  B.lastTime=now;
+
+  if(!B.paused&&!B.over){
+    B.timer-=dt;
+
+    B.switchLock=Math.max(
+      0,
+      B.switchLock-dt
+    );
+
+    B.attackTimer=Math.max(
+      0,
+      B.attackTimer-dt
+    );
+
+    B.enemyAttackTimer-=dt;
+
+    if(B.enemyAttackTimer<=0){
+      enemyAttack();
+    }
+
+    updateEffects(dt);
+    updatePopups(dt);
+
+    if(B.timer<=0){
+      B.timer=0;
+
+      if(B.playerHp>=B.enemyHp){
+        endBattle(true);
+      }else{
+        endBattle(false);
+      }
+    }
+
+    updateBattleHud();
+  }
+
+  drawBattle();
+
+  requestAnimationFrame(battleLoop);
+}
+
+/* =========================================================
+   PAUSE
+   ========================================================= */
+
+$('btnPause').addEventListener('click',()=>{
+  if(!B||B.over)return;
+
+  B.paused=!B.paused;
+
+  $('btnPause').textContent=
+    B.paused?'▶':'Ⅱ';
+
+  updateBattleHud();
+});
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+
+$('btnSettings').addEventListener('click',()=>{
+  $('modal').classList.add('on');
+
+  $('modalBox').innerHTML=`
+    <h3>SETTINGS</h3>
+
+    <div class="setting">
+      <span>SOUND</span>
+      <button class="btn" id="soundToggle">ON</button>
+    </div>
+
+    <div class="setting">
+      <span>PIXEL EFFECTS</span>
+      <button class="btn" id="fxToggle">ON</button>
+    </div>
+
+    <div class="setting">
+      <span>SAVE DATA</span>
+      <button class="btn" id="resetSave">RESET</button>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="closeSettings">CLOSE</button>
+    </div>
+  `;
+
+  $('closeSettings').addEventListener(
+    'click',
+    closeModal
+  );
+
+  $('resetSave').addEventListener('click',()=>{
+    if(confirm('Reset all game progress?')){
+      localStorage.removeItem(SAVE_KEY);
+      location.reload();
+    }
+  });
+});
+
+$('btnMail').addEventListener('click',()=>{
+  $('modal').classList.add('on');
+
+  $('modalBox').innerHTML=`
+    <h3>MAIL</h3>
+    <div class="notice">
+      Welcome to Ki Legends!
+      <br><br>
+      Thanks for playing.
+      <br><br>
+      <b>+500 GEMS</b>
+    </div>
+    <div class="row">
+      <button class="btn" id="mailClaim">CLAIM</button>
+    </div>
+  `;
+
+  $('mailClaim').addEventListener('click',()=>{
+    S.gems+=500;
+    saveGame();
+    updateHeader();
+    closeModal();
+    showToast('+500 GEMS');
+  });
+});
+
+/* =========================================================
+   INPUT / TOUCH
+   ========================================================= */
+
+let touchStartX=0;
+let touchStartY=0;
+
+battle.addEventListener('touchstart',e=>{
+  const t=e.touches[0];
+
+  touchStartX=t.clientX;
+  touchStartY=t.clientY;
+},{passive:true});
+
+battle.addEventListener('touchend',e=>{
+  if(!B||B.over)return;
+
+  const t=e.changedTouches[0];
+
+  const dx=t.clientX-touchStartX;
+  const dy=t.clientY-touchStartY;
+
+  if(Math.abs(dx)>80 && Math.abs(dx)>Math.abs(dy)){
+    if(dx>0){
+      switchPlayer(
+        (B.playerIndex+1)%B.playerTeam.length
+      );
+    }else{
+      switchPlayer(
+        (B.playerIndex-1+B.playerTeam.length)
+        %B.playerTeam.length
+      );
+    }
+  }
+},{passive:true});
+
+/* =========================================================
+   KEYBOARD
+   ========================================================= */
+
+window.addEventListener('keydown',e=>{
+  if(!B||B.over)return;
+
+  if(e.key==='Escape'){
+    B.paused=!B.paused;
+    $('btnPause').textContent=
+      B.paused?'▶':'Ⅱ';
+  }
+
+  if(e.key==='1')useCard(0);
+  if(e.key==='2')useCard(1);
+  if(e.key==='3')useCard(2);
+  if(e.key==='4')useCard(3);
+
+  if(e.key==='q'){
+    switchPlayer(
+      (B.playerIndex-1+B.playerTeam.length)
+      %B.playerTeam.length
+    );
+  }
+
+  if(e.key==='e'){
+    switchPlayer(
+      (B.playerIndex+1)%B.playerTeam.length
+    );
+  }
+
+  if(e.key===' '){
+    e.preventDefault();
+    $('bGuard').click();
+  }
+});
+
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
+
+function init(){
+  makeHeader();
+
+  updateHeader();
+
+  resizeAll();
+
+  drawHome();
+
+  renderRoster();
+  renderSummon();
+  renderMissions();
+  renderStory();
+  renderPvp();
+  renderProfile();
+
+  /* loading animation */
+  const bar=$('loadBar');
+  const txt=$('loadTxt');
+
+  let progress=0;
+
+  const timer=setInterval(()=>{
+    progress+=Math.random()*18+8;
+
+    if(progress>=100){
+      progress=100;
+      clearInterval(timer);
+
+      txt.textContent='READY';
+
+      setTimeout(()=>{
+        $('load').classList.add('hide');
+      },350);
+    }else{
+      txt.textContent=
+        progress<35?'LOADING...':
+        progress<70?'LOADING WARRIORS...':
+        'PREPARING BATTLE...';
+    }
+
+    bar.style.width=`${progress}%`;
+  },90);
+}
+
+window.addEventListener('load',init);
+
+</script>
+</body>
+</html>
+<!-- END OF GAME FILE -->
+
+<!--
+  Ki Legends
+  Final section of the HTML game.
+
+  This file is designed to run directly in a modern
+  mobile or desktop browser.
+-->
+
+<script>
+/* =========================================================
+   FINAL GAME HELPERS
+   ========================================================= */
+
+function refreshEverything(){
+  updateHeader();
+  renderRoster();
+  renderSummon();
+  renderMissions();
+  renderStory();
+  renderPvp();
+  renderProfile();
+
+  if(B){
+    buildBattleHud();
+    updateBattleHud();
+  }
+}
+
+function giveReward(type,amount){
+  amount=Math.max(0,Number(amount)||0);
+
+  if(type==='gems'){
+    S.gems+=amount;
+  }
+
+  if(type==='xp'){
+    addXP(amount);
+  }
+
+  if(type==='coins'){
+    S.coins=(S.coins||0)+amount;
+  }
+
+  saveGame();
+  updateHeader();
+}
+
+function completeMission(id){
+  const m=MISSIONS.find(x=>x.id===id);
+
+  if(!m)return;
+
+  if(S.claimed.includes(id)){
+    showToast('ALREADY CLAIMED');
+    return;
+  }
+
+  if(!missionComplete(m)){
+    showToast('MISSION NOT COMPLETE');
+    return;
+  }
+
+  S.claimed.push(id);
+
+  giveReward(
+    m.reward.type,
+    m.reward.amount
+  );
+
+  showToast(
+    `+${m.reward.amount} ${m.reward.type.toUpperCase()}`
+  );
+
+  renderMissions();
+}
+
+/* =========================================================
+   FINAL RESIZE HANDLING
+   ========================================================= */
+
+window.addEventListener('resize',()=>{
+  resizeAll();
+
+  if(B){
+    resizeCanvas(cv);
+    drawBattle();
+  }
+});
+
+window.addEventListener('orientationchange',()=>{
+  setTimeout(()=>{
+    resizeAll();
+
+    if(B){
+      resizeCanvas(cv);
+      drawBattle();
+    }
+  },200);
+});
+
+/* =========================================================
+   PREVENT MOBILE BROWSER BEHAVIOR
+   ========================================================= */
+
+document.addEventListener('touchmove',e=>{
+  if(
+    e.target.closest('#battle') ||
+    e.target.closest('.game')
+  ){
+    e.preventDefault();
+  }
+},{passive:false});
+
+document.addEventListener('gesturestart',e=>{
+  e.preventDefault();
+},{passive:false});
+
+document.addEventListener('dblclick',e=>{
+  if(e.target.closest('#game')){
+    e.preventDefault();
+  }
+});
+
+/* =========================================================
+   VISIBILITY
+   ========================================================= */
+
+document.addEventListener('visibilitychange',()=>{
+  if(!B)return;
+
+  if(document.hidden){
+    B.paused=true;
+
+    const pause=$('btnPause');
+
+    if(pause){
+      pause.textContent='▶';
+    }
+  }
+});
+
+/* =========================================================
+   SAVE BEFORE EXIT
+   ========================================================= */
+
+window.addEventListener('beforeunload',()=>{
+  saveGame();
+});
+
+/* =========================================================
+   GLOBAL ERROR PROTECTION
+   ========================================================= */
+
+window.addEventListener('error',e=>{
+  console.warn(
+    'Ki Legends error:',
+    e.message
+  );
+});
+
+/* =========================================================
+   START
+   ========================================================= */
+
+if(document.readyState==='loading'){
+  document.addEventListener(
+    'DOMContentLoaded',
+    init
+  );
+}else{
+  init();
+}
+
+</script>
+
+</body>
+</html>
